@@ -28,6 +28,7 @@ Funcionario;
 void cadastroCliente(Cliente* clientes, int quantidadeClientes) {
     clientes[quantidadeClientes].id = quantidadeClientes + 1;
     printf("--------------+++ CADASTRO DE CLIENTE +++--------------\n\n");
+    printf("Criacao de cliente de ID: %d", quantidadeClientes + 1);
     printf("Entre com o nome do cliente: ");
     scanf("%s", &clientes[quantidadeClientes].nome);    
     printf("Entre com o cpf do cliente: ");

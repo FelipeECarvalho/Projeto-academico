@@ -132,7 +132,7 @@ void consultarClientes(Cliente* clientes, int quantidadeClientes) {
     getchar();
 }
 
-void gerenciamentoClientes(Cliente* clientes, Funcionario* funcionarios, int quantidadeClientes, int quantidadeFuncionarios) {
+void gerenciamentoClientes(Cliente* clientes, int quantidadeClientes) {
     int opcao;
     do {
         system("cls");
@@ -164,12 +164,10 @@ void gerenciamentoClientes(Cliente* clientes, Funcionario* funcionarios, int qua
             case 4:
                 excluirCliente(clientes, quantidadeClientes);
                 break;
-            case 0:
-                return;
-                break;
         }
     } while (opcao != 0);
 }
+
 void cadastroFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     char confirmarSenha[120];
     funcionarios[quantidadeFuncionarios].id = quantidadeFuncionarios + 1;
@@ -205,6 +203,7 @@ void cadastroFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) 
     getchar();
     getchar();
 }
+
 void consultarFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     int id, achou;
     printf("--------------+++ CONSULTA FUNCIONARIO +++--------------\n\n");
@@ -234,6 +233,7 @@ void consultarFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios)
     getchar();
 
 }
+
 void consultarFuncionarios(Funcionario* funcionarios, int quantidadeFuncionarios) {
     printf("--------------+++ CONSULTA FUNCIONARIOS +++--------------\n\n");
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
@@ -251,6 +251,7 @@ void consultarFuncionarios(Funcionario* funcionarios, int quantidadeFuncionarios
     getchar();
     getchar();
 }
+
 void excluirFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     int id, achou, opcao;
     Funcionario funcionarioNovo;
@@ -287,7 +288,7 @@ void excluirFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     }
 }
 
-void gerenciamentoFuncionario(Cliente* clientes, Funcionario* funcionarios, int quantidadeClientes, int quantidadeFuncionarios) {
+void gerenciamentoFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     int opcao;
     do {
         system("cls");
@@ -319,9 +320,6 @@ void gerenciamentoFuncionario(Cliente* clientes, Funcionario* funcionarios, int 
             case 4:
                 excluirFuncionario(funcionarios, quantidadeFuncionarios);
                 break;
-            case 0:
-                return;
-                break;
         }
     } while (opcao != 0);
 }
@@ -336,6 +334,8 @@ void menu(Cliente* clientesCadastrados, Funcionario* funcionariosCadastrados, in
     int opcao;
     do {
         system("cls");
+        printf("%d", quantidadeCliente);
+        printf("%d", quantidadeFuncionario);
         printf("--------------+++ MENU PRINCIPAL +++--------------\n");
         printf("1 - Gerenciamento de clientes\n");
         printf("2 - Gerenciamento de funcionarios\n");
@@ -352,10 +352,10 @@ void menu(Cliente* clientesCadastrados, Funcionario* funcionariosCadastrados, in
 
         switch (opcao) {
             case 1:
-                gerenciamentoClientes(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
+                gerenciamentoClientes(clientesCadastrados, quantidadeCliente);
                 break;
             case 2:
-                gerenciamentoFuncionario(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
+                gerenciamentoFuncionario(funcionariosCadastrados, quantidadeFuncionario);
                 break;
             case 3:
                 relatorio(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);

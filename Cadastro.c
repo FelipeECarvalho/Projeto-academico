@@ -334,13 +334,10 @@ void menu(Cliente* clientesCadastrados, Funcionario* funcionariosCadastrados, in
     int opcao;
     do {
         system("cls");
-        printf("%d", quantidadeCliente);
-        printf("%d", quantidadeFuncionario);
         printf("--------------+++ MENU PRINCIPAL +++--------------\n");
         printf("1 - Gerenciamento de clientes\n");
         printf("2 - Gerenciamento de funcionarios\n");
         printf("3 - Acessar relatorios\n");
-        // TODO: adicionar redefinir senha
         printf("0 - Sair\n\n");
         printf("Escolha sua opcao: ");
         scanf("%d", &opcao);

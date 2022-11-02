@@ -380,9 +380,92 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
     return;
 }
 
+int recuperarSenhar() {
+    char user[15];
+    int opcao;
+    int id, senha=0, senha2=1;
+    do {
+        system("cls");
+        printf("--------------+++ RECUPERAR SENHA +++--------------\n");
+        printf("\nDigite o nome de usuario: ");
+        scanf("%s", &user);
+        printf("\nDigite o ID do seu usuario: ");
+        scanf("%d", &id);
+        if (id != 123) {
+            system("cls");
+            printf("\nID nao pertence a esse usuario");
+            getchar();
+            getchar();
+        } else {
+            printf("\nDigite a sua nova senha de 4 digitos: ");
+            scanf("%d", &senha);
+            printf("Repita a sua nova senha de 4 digitos: ");
+            scanf("%d", &senha2);
+        }
+        if (senha == senha2) {
+            printf("\nNova senha cadastrado com sucesso!\n\n");
+            getchar();
+            getchar();
+            return 1;
+        } else if(senha != 0 && senha2 != 1) {
+            system("cls");
+            printf("\nSenhas divergentes, tente novamente (0 - para sair, 1 - para continuar): ");
+            scanf("%d", &opcao);
+            while (opcao != 0 && opcao != 1)
+            {
+                printf("\nOpcao incorreta, tente novamente: ");
+                scanf("%d", &opcao);
+            }
+
+            if (opcao == 0){
+                return 0;
+            }
+            senha = 0;
+            senha2 = 1;
+        }
+    } while(senha != senha2);
+}
+
+int inicio()
+{
+    system("cls");
+    int opcao;
+    printf("------------+++ Bem vindo ao gestao B&L +++----------------\n");
+    do {
+        if (opcao != 1 && opcao != 2 && opcao!= 0){
+            printf("\nAlternativa inexistente!");
+            opcao = 0;
+        }
+        printf("\n1- Efetuar login");
+        printf("\n2- Esqueci senha");
+        printf("\n0- Sair do programa\n\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
+        
+        system("cls");
+        switch (opcao)
+        {
+            case 1:
+                printf("login");
+                break;
+            case 2:
+                if (recuperarSenhar() == 1){
+                    return 1;
+                } 
+                break;
+            default:
+                return 0;
+                break;
+        }
+
+    } while(opcao != 1 && opcao != 2 && opcao!= 0);
+}
+
 void main() {
     Cliente clientesCadastrados[1000];
     Funcionario funcionariosCadastrados[1000];
     int quantidadeCliente, quantidadeFuncionario;
-    menu(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);
+    if (inicio() == 1){
+        menu(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);
+    }
 }

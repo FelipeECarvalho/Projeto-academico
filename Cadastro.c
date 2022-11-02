@@ -26,7 +26,7 @@ typedef struct funcionario {
 }
 Funcionario;
 
-void cadastroCliente(Cliente* clientes, int quantidadeClientes) {
+void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
     clientes[quantidadeClientes].id = quantidadeClientes + 1;
     printf("--------------+++ CADASTRO DE CLIENTE +++--------------\n\n");
     printf("Criacao de cliente de ID: %d\n", quantidadeClientes + 1);
@@ -48,14 +48,18 @@ void cadastroCliente(Cliente* clientes, int quantidadeClientes) {
     getchar();
 }
 
-void consultarCliente(Cliente* clientes, int quantidadeClientes) {
+void consultarCliente(Cliente *clientes, int quantidadeClientes) {
     int id, achou;
     printf("--------------+++ CONSULTA CLIENTE +++--------------\n\n");
     printf("Entre com o id do cliente: ");
     scanf("%d", &id);
     while (id < 0 || id > quantidadeClientes) {
-        printf("ID invalido, tente novamente: ");
+        printf("ID invalido, tente novamente (0 - para sair): ");
         scanf("%d", &id);
+        
+        if (id == 0) {
+            return;
+        }
     }
     for (int i = 0; i < quantidadeClientes; i ++) {
         if (clientes[i].id == id) {
@@ -78,9 +82,8 @@ void consultarCliente(Cliente* clientes, int quantidadeClientes) {
 
 }
 
-void excluirCliente(Cliente* clientes, int quantidadeClientes) {
+void excluirCliente(Cliente *clientes, int quantidadeClientes) {
     int id, achou, opcao;
-    Cliente clienteNovo;
     printf("--------------+++ EXCLUSÃO CLIENTE +++--------------\n\n");
     printf("Entre com o id do cliente: ");
     scanf("%d", &id);
@@ -114,7 +117,7 @@ void excluirCliente(Cliente* clientes, int quantidadeClientes) {
     }
 }
 
-void consultarClientes(Cliente* clientes, int quantidadeClientes) {
+void consultarClientes(Cliente *clientes, int quantidadeClientes) {
     printf("--------------+++ CONSULTA CLIENTES +++--------------\n\n");
     for (int i = 0; i < quantidadeClientes; i ++) {
         if (clientes[i].id != -1 ) {
@@ -132,7 +135,7 @@ void consultarClientes(Cliente* clientes, int quantidadeClientes) {
     getchar();
 }
 
-void gerenciamentoClientes(Cliente* clientes, int quantidadeClientes) {
+void gerenciamentoClientes(Cliente *clientes, int quantidadeClientes) {
     int opcao;
     do {
         system("cls");
@@ -168,7 +171,7 @@ void gerenciamentoClientes(Cliente* clientes, int quantidadeClientes) {
     } while (opcao != 0);
 }
 
-void cadastroFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
+void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     char confirmarSenha[120];
     funcionarios[quantidadeFuncionarios].id = quantidadeFuncionarios + 1;
     printf("--------------+++ CADASTRO DE FUNCIONARIO +++--------------\n\n");
@@ -204,14 +207,18 @@ void cadastroFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) 
     getchar();
 }
 
-void consultarFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
+void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     int id, achou;
     printf("--------------+++ CONSULTA FUNCIONARIO +++--------------\n\n");
     printf("Entre com o ID do funcionario: ");
     scanf("%d", &id);
     while (id < 0 || id > quantidadeFuncionarios) {
-        printf("ID invalido, tente novamente: ");
+        printf("ID invalido, tente novamente: (0 - para sair)");
         scanf("%d", &id);
+
+        if (id == 0) {
+            return;
+        }
     }
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id == id) {
@@ -234,7 +241,7 @@ void consultarFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios)
 
 }
 
-void consultarFuncionarios(Funcionario* funcionarios, int quantidadeFuncionarios) {
+void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios) {
     printf("--------------+++ CONSULTA FUNCIONARIOS +++--------------\n\n");
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id != -1 ) {
@@ -252,7 +259,7 @@ void consultarFuncionarios(Funcionario* funcionarios, int quantidadeFuncionarios
     getchar();
 }
 
-void excluirFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
+void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     int id, achou, opcao;
     Funcionario funcionarioNovo;
     printf("--------------+++ EXCLUSÃO FUNCIONARIO +++--------------\n\n");
@@ -288,7 +295,7 @@ void excluirFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
     }
 }
 
-void gerenciamentoFuncionario(Funcionario* funcionarios, int quantidadeFuncionarios) {
+void gerenciamentoFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     int opcao;
     do {
         system("cls");
@@ -324,13 +331,13 @@ void gerenciamentoFuncionario(Funcionario* funcionarios, int quantidadeFuncionar
     } while (opcao != 0);
 }
 
-void relatorio(Cliente* clientesCadastrados, Funcionario* funcionariosCadastrados, int quantidadeCliente, int quantidadeFuncionario) {
+void relatorio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int quantidadeCliente, int quantidadeFuncionario) {
     printf("--------------+++ RELATORIO +++--------------\n");
     printf("Total de clientes cadastrados: %d\n", clientesCadastrados);
     printf("Total de funcionarios cadastrados: %d\n", funcionariosCadastrados);
 }
 
-void menu(Cliente* clientesCadastrados, Funcionario* funcionariosCadastrados, int quantidadeCliente, int quantidadeFuncionario) {
+void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int quantidadeCliente, int quantidadeFuncionario) {
     int opcao;
     do {
         system("cls");

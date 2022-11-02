@@ -426,39 +426,65 @@ int recuperarSenhar() {
     } while(senha != senha2);
 }
 
+
+int login() {
+    char usuario[30];
+    char senha[30];
+    int opcao;
+    do {
+        system("cls");
+        printf("--------------+++ TELA DE LOGIN +++--------------\n");
+        printf("Entre com o usuario: ");
+        scanf("%s",&usuario);
+        printf("Entre com a senha: ");
+        scanf("%s",&senha);
+        if(strcmp(usuario,"admin") != 0 || strcmp(senha,"admin") != 0 ){
+            printf("\nUsuario ou senha incorretos, deseja tentar novamente? (0 - para sair, 1 - para continuar): \n");
+            scanf("%d", &opcao);
+            while(opcao != 1 && opcao != 0) {
+                printf("Opcao incorreta, tente novamente: ");
+                scanf("%d", &opcao);
+            }
+            if (opcao == 0){
+                return 0;
+            }
+        }
+    } while(strcmp(usuario,"admin") != 0 || strcmp(senha,"admin") != 0);
+    return 1;
+}
+
 int inicio()
 {
-    system("cls");
     int opcao;
-    printf("------------+++ Bem vindo ao gestao B&L +++----------------\n");
     do {
-        if (opcao != 1 && opcao != 2 && opcao!= 0){
-            printf("\nAlternativa inexistente!");
-            opcao = 0;
-        }
+        system("cls");
+        printf("------------+++ Bem vindo ao gestao B&L +++----------------\n");
         printf("\n1- Efetuar login");
         printf("\n2- Esqueci senha");
         printf("\n0- Sair do programa\n\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
-        
+        while(opcao > 2 || opcao < 0) {
+            printf("opcao incorreta, tente novamente");
+            scanf("%d", &opcao);
+        }
         system("cls");
         switch (opcao)
         {
             case 1:
-                printf("login");
+                if (login() == 1){
+                    return 1;
+                } 
                 break;
             case 2:
                 if (recuperarSenhar() == 1){
                     return 1;
                 } 
                 break;
-            default:
-                return 0;
-                break;
         }
 
-    } while(opcao != 1 && opcao != 2 && opcao!= 0);
+    } while(opcao != 0);
+    return 0;
 }
 
 void main() {

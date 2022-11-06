@@ -245,7 +245,7 @@ void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) 
         printf("Entre com a senha: ");
         scanf("%s", &funcionarios[quantidadeFuncionarios].senha);
         printf("Confirme a senha: ");
-        scanf("%s", confirmarSenha);
+        scanf("%s", &confirmarSenha);
     }
     system("cls");
     printf("Funcionario cadastrado com sucesso!");
@@ -444,50 +444,60 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
     return;
 }
 
-int recuperarSenhar() {
-    char user[15];
-    int opcao;
-    int id, senha=0, senha2=1;
+int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
+    char senha[120], senhaConfirmar[120];
+    int opcao, id, achou = 0;
+    // Pegando o valor da variável por seu endereço de memória(a variável quantidadeFuncionário é o ponteiro para esse endereço de memória)
+    int quantidadeFuncionarioValor = *quantidadeFuncionario;
+
     do {
         system("cls");
         printf("--------------+++ RECUPERAR SENHA +++--------------\n");
-        printf("\nDigite o nome de usuario: ");
-        scanf("%s", &user);
-        printf("\nDigite o ID do seu usuario: ");
+        printf("Entre com o ID: ");
         scanf("%d", &id);
-        if (id != 123) {
-            system("cls");
-            printf("\nID nao pertence a esse usuario");
-            getchar();
-            getchar();
-        } else {
-            printf("\nDigite a sua nova senha de 4 digitos: ");
-            scanf("%d", &senha);
-            printf("Repita a sua nova senha de 4 digitos: ");
-            scanf("%d", &senha2);
-        }
-        if (senha == senha2) {
-            printf("\nNova senha cadastrado com sucesso!\n\n");
-            getchar();
-            getchar();
-            return 1;
-        } else if(senha != 0 && senha2 != 1) {
-            system("cls");
-            printf("\nSenhas divergentes, tente novamente (0 - para sair, 1 - para continuar): ");
-            scanf("%d", &opcao);
-            while (opcao != 0 && opcao != 1)
-            {
-                printf("\nOpcao incorreta, tente novamente: ");
-                scanf("%d", &opcao);
-            }
-
-            if (opcao == 0){
+        
+        // Caso o id informado seja menor que 0  ou maior que a quantidade de funcionarios será considerado inválido
+        while (id < 0 || id > quantidadeFuncionarioValor) {
+            printf("ID inválido, tente novamente: (-1 para cancelar): ");
+            scanf("%d", &id);
+            
+            if (id == -1) {
                 return 0;
             }
-            senha = 0;
-            senha2 = 1;
         }
-    } while(senha != senha2);
+        // é verificado em todos os funcionários cadastrados para verificar se algum tem esse id
+        for (int i = 0; i < quantidadeFuncionarioValor; i ++) {
+            if (funcionarioCadastrados[i].id == id) {
+                // caso tenha é atribuido 1 para a variavel achou
+                achou = 1;
+                printf("Entre com sua nova senha: ");
+                scanf("%s", &senha);
+                
+                printf("Confirme sua senha: ");
+                scanf("%s", &senhaConfirmar);
+                
+                // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
+                while (strcmp(senha, senhaConfirmar) != 0) {
+                        printf("Senhas divergentes, tente novamente\n");
+                        printf("Entre com sua nova senha: ");
+                        scanf("%s", &senha);
+                        printf("Confirme sua senha: ");
+                        scanf("%s", &senhaConfirmar);
+                }
+
+                strcpy(funcionarioCadastrados[i].senha, senha);
+                printf("\nNova senha cadastrado com sucesso!");
+                getchar();
+                getchar();
+                return 0;
+            }
+        }
+        if (achou == 0 ) {
+            printf("Funcionario nao encontrado, deseja tentar novamente? (0 - sair, 1 - tentar novamente): ");
+            scanf("%d", &opcao);
+        }
+    } while(opcao != 0);
+    return 0;
 }
 
 
@@ -495,9 +505,10 @@ int recuperarSenhar() {
 int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
     char login[100], senha[120];
     int quantidadeFuncionariosValor = *quantidadeFuncionarios;
-    int opcao, achou = 0;
+    int opcao, achou;
 
     do {
+        achou = 0;
         system("cls");
         printf("--------------+++ TELA DE LOGIN +++--------------\n");
         printf("Entre com o login: ");
@@ -561,7 +572,7 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
                 } 
                 break;
             case 2:
-                recuperarSenhar();
+                recuperarSenhar(funcionariosCadastrados, quantidadeFuncionario);
                 break;
         }
 

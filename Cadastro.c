@@ -28,6 +28,8 @@ typedef struct funcionario {
 }
 Funcionario;
 
+
+// Método utilizado para inserir os funcionários iniciais para o funcionamento do programa
 void inserirFuncionarios(Funcionario *funcionarios) {
     // Inserção do funcionário gerente
     funcionarios[0].id = 1;
@@ -195,6 +197,7 @@ void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
         switch (opcao) {
             case 1:
                 cadastroCliente(clientes, quantidadeClientesValor);
+                // apos o cadastro do cliente a quantidade de clientes é aumentada
                 (*quantidadeClientes) ++;
                 break;
             case 2:
@@ -210,7 +213,8 @@ void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
     } while (opcao != 0);
 }
 
-// Cadastro de funcionários,
+// Cadastro de funcionários
+// Os funcionários cadastrados aqui poderão realizar login no sistema. Para isso é necessário escolher a opção desconectar do menu principal e realizar o login com o login e a senha informados no cadastro
 void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     char confirmarSenha[120];
     funcionarios[quantidadeFuncionarios].id = quantidadeFuncionarios + 1;
@@ -370,6 +374,7 @@ void gerenciamentoFuncionario(Funcionario *funcionarios, int *quantidadeFunciona
         switch (opcao) {
             case 1:
                 cadastroFuncionario(funcionarios, quantidadeFuncionariosValor);
+                // após o cadastro de funcionário a variável quantidade funcionario é aumentada em um
                 (*quantidadeFuncionarios) ++;
                 break;
             case 2:
@@ -489,12 +494,15 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
         printf("--------------+++ TELA DE LOGIN +++--------------\n");
         printf("Entre com o login: ");
         scanf("%s", &login);
+        // é verificado em todos os funcionários(funcionários não excluídos, isso é, funcionários que tenham o id diferente de -1) cadastrados para caso algum tenha o o mesmo login que o usuário informou
         for (int i = 0; i < quantidadeFuncionariosValor; i ++) {
                 if (funcionarioCadastrados[i].id != -1 && strcmp(funcionarioCadastrados[i].login, login) == 0) {
+                    // caso tenha, é atribuido o valor 1 para a variável achou.
                     achou = 1;
                     printf("Entre com a senha: ");
                     scanf("%s",&senha);
                     
+                    // Se a senha do funcionário for igual a que o usuário digitou é retornado 1
                     if (strcmp(funcionarioCadastrados[i].senha, senha) == 0 ) {
                         return 1;
                     } else {
@@ -505,6 +513,7 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
                 }
         }
         if (achou == 0) {
+            // Se nao encontrou exibi a opcão de tentar novamente ou desistir
             printf("Usuario nao encontrado, deseja tentar novamente? (0 - sair, 1 - continuar): ");
             scanf("%d", &opcao);
             while(opcao != 0 && opcao != 1){
@@ -535,6 +544,7 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         switch (opcao)
         {
             case 1:
+                // caso a tela de login retorne 1, isso é, o usuário digitou corretamento o login e a senha, é redirecionado para o menu.
                 if (login(funcionariosCadastrados, quantidadeFuncionario) == 1 ) {
                     menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
                 } 

@@ -403,7 +403,7 @@ void relatorio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrado
 }
 
 // Menu principal
-void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario) {
+void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario, int funcionarioLogado) {
     int opcao;
     do {
         system("cls");
@@ -427,7 +427,14 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
                 gerenciamentoClientes(clientesCadastrados, quantidadeCliente);
                 break;
             case 2:
-                gerenciamentoFuncionario(funcionariosCadastrados, quantidadeFuncionario);
+                // caso o funcionário que fez login não é um gerente ele  não poderá fazer o gerenciamento de funcionários
+                if (strcmp("Gerente", funcionariosCadastrados[funcionarioLogado].cargo) == 0){
+                    gerenciamentoFuncionario(funcionariosCadastrados, quantidadeFuncionario);
+                } else {
+                    printf("Voce nao tem permissao para gerenciar funcionarios");
+                    getchar();
+                    getchar();
+                }
                 break;
             case 3:
                 relatorio(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
@@ -484,6 +491,7 @@ int recuperarSenhar() {
 }
 
 
+// caso encontre o funcionário, e o usuário digite corretamente o login e a senha, é retornado o id do funcionário que foi logado
 int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
     char login[100], senha[120];
     int quantidadeFuncionariosValor = *quantidadeFuncionarios;
@@ -502,9 +510,9 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
                     printf("Entre com a senha: ");
                     scanf("%s",&senha);
                     
-                    // Se a senha do funcionário for igual a que o usuário digitou é retornado 1
+                    // Se a senha do funcionário for igual a que o usuário digitou é retornado a posicao dele
                     if (strcmp(funcionarioCadastrados[i].senha, senha) == 0 ) {
-                        return 1;
+                        return i;
                     } else {
                         printf("Senha incorreta");
                         getchar();
@@ -522,12 +530,13 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
             }
         }
     } while(opcao != 0);
-    return 0;
+    return -1;
 }
 
 void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario)
 {
     int opcao;
+    int funcionarioLogado = 0;
     do {
         system("cls");
         printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
@@ -544,9 +553,11 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         switch (opcao)
         {
             case 1:
-                // caso a tela de login retorne 1, isso é, o usuário digitou corretamento o login e a senha, é redirecionado para o menu.
-                if (login(funcionariosCadastrados, quantidadeFuncionario) == 1 ) {
-                    menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
+                // caso a tela de login retorne um valor difente de -1, isso é, o usuário digitou corretamento o login e a senha, é redirecionado para o menu.
+                // a variável usuario logado será utilizada para fazer o controle entre a permissão de acesso entre determinadas funcionalidades
+                funcionarioLogado = login(funcionariosCadastrados, quantidadeFuncionario);
+                if (funcionarioLogado != -1) {
+                    menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario, funcionarioLogado);
                 } 
                 break;
             case 2:

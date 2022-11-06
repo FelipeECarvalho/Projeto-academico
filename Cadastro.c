@@ -28,6 +28,31 @@ typedef struct funcionario {
 }
 Funcionario;
 
+void inserirFuncionarios(Funcionario *funcionarios) {
+    // Inserção do funcionário gerente
+    funcionarios[0].id = 1;
+    strcpy(funcionarios[0].cpf, "123.321.123-90");
+    strcpy(funcionarios[0].cargo, "Gerente");
+    strcpy(funcionarios[0].dataNascimento, "09-10-1999");
+    strcpy(funcionarios[0].login, "admin");
+    strcpy(funcionarios[0].senha, "admin");
+    strcpy(funcionarios[0].telefone, "12999999999");
+    strcpy(funcionarios[0].nome, "Carlos");
+    strcpy(funcionarios[0].email, "carlos@email.com");
+
+    //Inserção um funcionário
+
+    funcionarios[1].id = 2;
+    strcpy(funcionarios[1].cpf, "321.123.321-80");
+    strcpy(funcionarios[1].cargo, "Suporte");
+    strcpy(funcionarios[1].dataNascimento, "19-11-1999");
+    strcpy(funcionarios[1].login, "suporte");
+    strcpy(funcionarios[1].senha, "123");
+    strcpy(funcionarios[1].telefone, "13444444444");
+    strcpy(funcionarios[1].nome, "marcos");
+    strcpy(funcionarios[1].email, "marcos@email.com");
+}
+
 void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
     // Cadastro de usuário. O Id do usuário será a quantidade de usuários + 1, para que assim não exista cliente de ID = 0
     clientes[quantidadeClientes].id = quantidadeClientes + 1;
@@ -381,7 +406,7 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
         printf("1 - Gerenciamento de clientes\n");
         printf("2 - Gerenciamento de funcionarios\n");
         printf("3 - Acessar relatorios\n");
-        printf("0 - Sair\n\n");
+        printf("0 - Desconectar\n\n");
         printf("Escolha sua opcao: ");
         scanf("%d", &opcao);
 
@@ -454,41 +479,52 @@ int recuperarSenhar() {
 }
 
 
-int login() {
-    char usuario[30];
-    char senha[30];
-    int opcao;
+int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
+    char login[100], senha[120];
+    int quantidadeFuncionariosValor = *quantidadeFuncionarios;
+    int opcao, achou = 0;
+
     do {
         system("cls");
         printf("--------------+++ TELA DE LOGIN +++--------------\n");
-        printf("Entre com o usuario: ");
-        scanf("%s",&usuario);
-        printf("Entre com a senha: ");
-        scanf("%s",&senha);
-        if(strcmp(usuario,"admin") != 0 || strcmp(senha,"admin") != 0 ){
-            printf("\nUsuario ou senha incorretos, deseja tentar novamente? (0 - para sair, 1 - para continuar): \n");
+        printf("Entre com o login: ");
+        scanf("%s", &login);
+        for (int i = 0; i < quantidadeFuncionariosValor; i ++) {
+                if (funcionarioCadastrados[i].id != -1 && strcmp(funcionarioCadastrados[i].login, login) == 0) {
+                    achou = 1;
+                    printf("Entre com a senha: ");
+                    scanf("%s",&senha);
+                    
+                    if (strcmp(funcionarioCadastrados[i].senha, senha) == 0 ) {
+                        return 1;
+                    } else {
+                        printf("Senha incorreta");
+                        getchar();
+                        getchar();
+                    }
+                }
+        }
+        if (achou == 0) {
+            printf("Usuario nao encontrado, deseja tentar novamente? (0 - sair, 1 - continuar): ");
             scanf("%d", &opcao);
-            while(opcao != 1 && opcao != 0) {
-                printf("Opcao incorreta, tente novamente: ");
+            while(opcao != 0 && opcao != 1){
+                printf("Opcao incorreta, tente novamente");
                 scanf("%d", &opcao);
             }
-            if (opcao == 0){
-                return 0;
-            }
         }
-    } while(strcmp(usuario,"admin") != 0 || strcmp(senha,"admin") != 0);
-    return 1;
+    } while(opcao != 0);
+    return 0;
 }
 
-int inicio()
+void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario)
 {
     int opcao;
     do {
         system("cls");
-        printf("------------+++ Bem vindo ao gestao B&L +++----------------\n");
-        printf("\n1- Efetuar login");
-        printf("\n2- Esqueci senha");
-        printf("\n0- Sair do programa\n\n");
+        printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
+        printf("1 - Efetuar login\n");
+        printf("2 - Esqueci senha\n");
+        printf("0 - Sair do programa\n\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
         while(opcao > 2 || opcao < 0) {
@@ -499,27 +535,25 @@ int inicio()
         switch (opcao)
         {
             case 1:
-                if (login() == 1){
-                    return 1;
+                if (login(funcionariosCadastrados, quantidadeFuncionario) == 1 ) {
+                    menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
                 } 
                 break;
             case 2:
-                if (recuperarSenhar() == 1){
-                    return 1;
-                } 
+                recuperarSenhar();
                 break;
         }
 
     } while(opcao != 0);
-    return 0;
 }
 
 void main() {
     // As variáveis são declaradas na main para que não sejam sobrescritas nos métodos. As variáveis quantidadeCliente e quantidadeFuncionarios são passadas por referência, isso é, o valor que é atribuido à elas nas funções é mantido independente da função.
     Cliente clientesCadastrados[1000];
     Funcionario funcionariosCadastrados[1000];
-    int quantidadeCliente, quantidadeFuncionario;
-    if (inicio() == 1){
-        menu(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);
-    }
+    int quantidadeCliente;
+    int quantidadeFuncionario = 2;
+
+    inserirFuncionarios(funcionariosCadastrados);
+    inicio(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);      
 }

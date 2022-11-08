@@ -6,6 +6,7 @@
 typedef struct cliente {
     int id;
     char nome[100];
+    char sobrenome[100];
     char email[120];
     char dataNascimento[20];
     char telefone[20];
@@ -18,6 +19,8 @@ Cliente;
 typedef struct funcionario {
     int id;
     char nome[100];
+    char sobrenome[100];
+    double salario;
     char email[120];
     char dataNascimento[20];
     char telefone[20];
@@ -33,6 +36,7 @@ Funcionario;
 void inserirFuncionarios(Funcionario *funcionarios) {
     // Inserção do funcionário gerente
     funcionarios[0].id = 1;
+    funcionarios[0].salario = 5000.00;
     strcpy(funcionarios[0].cpf, "123.321.123-90");
     strcpy(funcionarios[0].cargo, "Gerente");
     strcpy(funcionarios[0].dataNascimento, "09-10-1999");
@@ -40,18 +44,21 @@ void inserirFuncionarios(Funcionario *funcionarios) {
     strcpy(funcionarios[0].senha, "admin");
     strcpy(funcionarios[0].telefone, "12999999999");
     strcpy(funcionarios[0].nome, "Carlos");
+    strcpy(funcionarios[0].sobrenome, "Almeida");
     strcpy(funcionarios[0].email, "carlos@email.com");
 
     //Inserção um funcionário
 
     funcionarios[1].id = 2;
+    funcionarios[1].salario = 2500.00;
     strcpy(funcionarios[1].cpf, "321.123.321-80");
     strcpy(funcionarios[1].cargo, "Suporte");
     strcpy(funcionarios[1].dataNascimento, "19-11-1999");
     strcpy(funcionarios[1].login, "suporte");
     strcpy(funcionarios[1].senha, "123");
     strcpy(funcionarios[1].telefone, "13444444444");
-    strcpy(funcionarios[1].nome, "marcos");
+    strcpy(funcionarios[1].nome, "Marcos");
+    strcpy(funcionarios[1].sobrenome, "Antonio");
     strcpy(funcionarios[1].email, "marcos@email.com");
 }
 
@@ -60,8 +67,10 @@ void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
     clientes[quantidadeClientes].id = quantidadeClientes + 1;
     printf("--------------+++ CADASTRO DE CLIENTE +++--------------\n");
     printf("Criacao de cliente de ID: %d\n", quantidadeClientes + 1);
-    printf("Entre com o nome do cliente: ");
+    printf("Entre com o primeiro nome do cliente: ");
     scanf("%s", &clientes[quantidadeClientes].nome);
+    printf("Entre com o sobrenome do cliente: ");
+    scanf("%s", &clientes[quantidadeClientes].sobrenome);
     printf("Entre com o cpf do cliente: ");
     scanf("%s", &clientes[quantidadeClientes].cpf);
     printf("Entre com a data de nascimento do cliente: (dd-mm-aaaa) ");
@@ -97,6 +106,7 @@ void consultarCliente(Cliente *clientes, int quantidadeClientes) {
     for (int i = 0; i < quantidadeClientes; i ++) {
         if (clientes[i].id == id) {
             printf("Nome cliente: %s\n", clientes[i].nome);
+            printf("Sobrenome cliente: %s\n", clientes[i].sobrenome);
             printf("Cpf cliente: %s\n", clientes[i].cpf);
             printf("Data de nascimento cliente: %s\n", clientes[i].dataNascimento);
             printf("E-mail cliente: %s\n", clientes[i].email);
@@ -122,11 +132,12 @@ void consultarCliente(Cliente *clientes, int quantidadeClientes) {
 void excluirCliente(Cliente *clientes, int quantidadeClientes) {
     int id, achou, opcao;
     printf("--------------+++ EXCLUSAO CLIENTE +++--------------\n");
-    printf("Entre com o id do cliente: ");
+    printf("Entre com o ID do cliente: ");
     scanf("%d", &id);
     for (int i = 0; i < quantidadeClientes; i ++) {
         if (clientes[i].id == id) {
             printf("Nome cliente: %s\n", clientes[i].nome);
+            printf("Sobrenome cliente: %s\n", clientes[i].sobrenome);
             printf("Cpf cliente: %s\n", clientes[i].cpf);
             printf("Data de nascimento cliente: %s\n", clientes[i].dataNascimento);
             printf("E-mail cliente: %s\n", clientes[i].email);
@@ -161,6 +172,7 @@ void consultarClientes(Cliente *clientes, int quantidadeClientes) {
         if (clientes[i].id != -1 ) {
             printf("Id cliente: %d\n", clientes[i].id);
             printf("Nome cliente: %s\n", clientes[i].nome);
+            printf("Sobrenome cliente: %s\n", clientes[i].nome);
             printf("Cpf cliente: %s\n", clientes[i].cpf);
             printf("Data de nascimento cliente: %s\n", clientes[i].dataNascimento);
             printf("E-mail cliente: %s\n", clientes[i].email);
@@ -221,10 +233,14 @@ void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) 
     // O Id do funcionários será a quantidade de funcionários + 1, para que assim não exista funcionário de ID = 0
     printf("--------------+++ CADASTRO DE FUNCIONARIO +++--------------\n");
     printf("Criacao de funcionario de ID: %d\n", quantidadeFuncionarios + 1);
-    printf("Entre com o nome do funcionario: ");
+    printf("Entre com o primeiro nome do funcionario: ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].nome);
+    printf("Entre com o sobrenome do funcionario: ");
+    scanf("%s", &funcionarios[quantidadeFuncionarios].sobrenome);
     printf("Entre com o cpf do funcionario: ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].cpf);
+    printf("Entre com o salario do funcionario: ");
+    scanf("%f", &funcionarios[quantidadeFuncionarios].salario);
     printf("Entre com a data de nascimento do funcionario: (dd-mm-aaaa) ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].dataNascimento);
     printf("Entre com o e-mail do funcionario: ");
@@ -272,6 +288,8 @@ void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios)
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id == id) {
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
+            printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
+            printf("Salario funcionario: %f\n", funcionarios[i].salario);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
@@ -301,7 +319,9 @@ void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios
         if (funcionarios[i].id != -1 ) {
             printf("Id funcionario: %d\n", funcionarios[i].id);
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
+            printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
+            printf("Salario funcionario: %f\n", funcionarios[i].salario);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
             printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
@@ -323,7 +343,9 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id == id) {
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
+            printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
+            printf("Salario funcionario: %f\n", funcionarios[i].salario);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
             printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
@@ -390,14 +412,44 @@ void gerenciamentoFuncionario(Funcionario *funcionarios, int *quantidadeFunciona
     } while (opcao != 0);
 }
 
-// Relatórios simples, é mostrados o número total de clientes e funcionários
 void relatorio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario) {
-    printf("--------------+++ RELATORIO +++--------------\n");
+    // Atribuindo o valor do local de memória no qual o ponteiro está apontando
     int clientesCadastradosValor = *quantidadeCliente;
     int funcionariosCadastradosValor = *quantidadeFuncionario;
+   
+    // Por padrão o maior e o menor salário é do primeiro usuário cadastrado, depois esse valor é modificado
+    double maiorSalario = funcionariosCadastrados[0].salario;
+    double menorSalario = funcionariosCadastrados[0].salario;
+    char nomeMaiorSalario[100];
+    char nomeMenorSalario[100];
+    strcpy(nomeMaiorSalario, funcionariosCadastrados[0].nome);
+    strcpy(nomeMenorSalario, funcionariosCadastrados[0].nome);
+    
+    double mediaSalario = 0.0;
+    // é verificado em todos os funcionários cadastrados
+    for (int i = 0; i < funcionariosCadastradosValor; i ++) {
+        mediaSalario += funcionariosCadastrados[i].salario;
 
-    printf("Total de clientes cadastrados: %d\n", clientesCadastradosValor);
-    printf("Total de funcionarios cadastrados: %d\n", funcionariosCadastradosValor);
+        // caso o salario do funcionário for maior que o maior salario, o salário desse funcionário passa a ser o maior
+        if (funcionariosCadastrados[i].salario > maiorSalario) {
+            maiorSalario = funcionariosCadastrados[i].salario;
+            strcpy(nomeMaiorSalario, funcionariosCadastrados[i].nome);
+        } 
+
+        // caso o salario do funcionário for menor que o menor salario, o salário desse funcionário passa a ser o menor
+        if (funcionariosCadastrados[i].salario < menorSalario) {
+            menorSalario = funcionariosCadastrados[i].salario;
+            strcpy(nomeMenorSalario, funcionariosCadastrados[i].nome);
+        }
+    }
+    mediaSalario /= funcionariosCadastradosValor;
+    printf("--------------+++ RELATORIO +++--------------\n");
+    printf("Total de clientes cadastrados: %d\n\n", clientesCadastradosValor);
+    printf("Total de funcionarios cadastrados: %d\n\n", funcionariosCadastradosValor);
+    printf("O maior salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", maiorSalario, nomeMaiorSalario);
+    printf("O menor salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", menorSalario, nomeMenorSalario);
+    printf("A media de salarios cadastrados e de: %.2f", mediaSalario);
+
     getchar();
     getchar();
 }
@@ -557,7 +609,7 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
         while(opcao > 2 || opcao < 0) {
-            printf("opcao incorreta, tente novamente");
+            printf("Opcao incorreta, tente novamente");
             scanf("%d", &opcao);
         }
         system("cls");

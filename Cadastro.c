@@ -88,9 +88,9 @@ void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
 }
 
 void consultarCliente(Cliente *clientes, int quantidadeClientes) {
-    int id, achou;
+    int id = 0, achou = 0;
     printf("--------------+++ CONSULTA CLIENTE +++--------------\n");
-    printf("Entre com o id do cliente: ");
+    printf("Entre com o ID do cliente: ");
     scanf("%d", &id);
     // Se a id for menor que 0 ou maior que o número de clientes será uma consulta inválida
     while (id < 0 || id > quantidadeClientes) {
@@ -120,8 +120,6 @@ void consultarCliente(Cliente *clientes, int quantidadeClientes) {
     // se a variável achou for igual a 0, significa que não achou
     if (achou == 0) {
         printf("Cliente nao encontrado");
-        getchar();
-        getchar();
     }
     getchar();
     getchar();
@@ -130,7 +128,7 @@ void consultarCliente(Cliente *clientes, int quantidadeClientes) {
 
 // É verificado em todos os clientes para caso algum tenha o id informado, se tiver atribui o valor de ID para -1. Com o ID de -1 o cliente não será listado em nenhuma consulta.
 void excluirCliente(Cliente *clientes, int quantidadeClientes) {
-    int id, achou, opcao;
+    int id = 0, achou = 0, opcao = 0;
     printf("--------------+++ EXCLUSAO CLIENTE +++--------------\n");
     printf("Entre com o ID do cliente: ");
     scanf("%d", &id);
@@ -144,7 +142,7 @@ void excluirCliente(Cliente *clientes, int quantidadeClientes) {
             printf("Telefone cliente: %s\n", clientes[i].telefone);
             printf("Curso matriculado: %s\n\n", clientes[i].cursoMatriculado);
             achou = 1;
-            printf("Deseja realmente excluir o cliente\n0 - Cancelar \n1 - Excluir: ");
+            printf("Deseja realmente excluir o cliente\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
             scanf("%d", &opcao);
             while (opcao != 1 && opcao != 0) {
                 printf("opcao invalida, tente novamente: ");
@@ -153,16 +151,14 @@ void excluirCliente(Cliente *clientes, int quantidadeClientes) {
             if (opcao == 1){
                 clientes[i].id = -1;
                 printf("Cliente excluido com sucesso!");
-                getchar();
-                getchar();
             }
         }
     }
     if (achou == 0) {
         printf("Cliente nao encontrado");
-        getchar();
-        getchar();
     }
+    getchar();
+    getchar();
 }
 
 // Listagem de todos os clientes cadastrados, menos os que tem o id de -1, que são os excluídos.
@@ -187,7 +183,7 @@ void consultarClientes(Cliente *clientes, int quantidadeClientes) {
 
 // Tela principal do gerenciamento de clientes.
 void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
-    int opcao;
+    int opcao = 0;
     do {
         int quantidadeClientesValor = *quantidadeClientes;
         system("cls");
@@ -197,8 +193,8 @@ void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
         printf("3 - Consultar todos os clientes\n");
         printf("4 - Excluir cliente\n");
         printf("0 - Voltar ao menu\n");
-        printf("--------------------");
-        printf("\nEscolha sua opcao: ");
+        printf("--------------------\n");
+        printf("Escolha sua opcao: ");
         scanf("%d", &opcao);
 
         while (opcao > 4 || opcao < 0) {
@@ -240,7 +236,7 @@ void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) 
     printf("Entre com o cpf do funcionario: ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].cpf);
     printf("Entre com o salario do funcionario: ");
-    scanf("%f", &funcionarios[quantidadeFuncionarios].salario);
+    scanf("%lf", &funcionarios[quantidadeFuncionarios].salario);
     printf("Entre com a data de nascimento do funcionario: (dd-mm-aaaa) ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].dataNascimento);
     printf("Entre com o e-mail do funcionario: ");
@@ -270,13 +266,13 @@ void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) 
 }
 
 void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
-    int id, achou;
+    int id = 0, achou = 0;
     printf("--------------+++ CONSULTA FUNCIONARIO +++--------------\n");
     printf("Entre com o ID do funcionario: ");
     scanf("%d", &id);
     // Se a id for menor que 0 ou maior que o número de funcionários será uma consulta inválida
     while (id < 0 || id > quantidadeFuncionarios) {
-        printf("ID invalido, tente novamente: (0 - para sair)");
+        printf("ID invalido, tente novamente (0 - para sair): ");
         scanf("%d", &id);
 
         if (id == 0) {
@@ -289,7 +285,7 @@ void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios)
         if (funcionarios[i].id == id) {
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
             printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
-            printf("Salario funcionario: %f\n", funcionarios[i].salario);
+            printf("Salario funcionario: %.2f\n", funcionarios[i].salario);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
@@ -304,8 +300,6 @@ void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios)
     // se a variável achou for igual a 0, significa que não achou
     if (achou == 0) {
         printf("Funcionario nao encontrado");
-        getchar();
-        getchar();
     }
     getchar();
     getchar();
@@ -315,13 +309,14 @@ void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios)
 // Listagem de todos os funcionários cadastrados, menos os que tem o id de -1, que são os excluídos.
 void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios) {
     printf("--------------+++ CONSULTA FUNCIONARIOS +++--------------\n");
+    
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id != -1 ) {
             printf("Id funcionario: %d\n", funcionarios[i].id);
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
             printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
-            printf("Salario funcionario: %f\n", funcionarios[i].salario);
+            printf("Salario funcionario: %.2f\n", funcionarios[i].salario);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
             printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
@@ -335,9 +330,8 @@ void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios
 
 // É verificado em todos os clientes para caso algum tenha o id informado, se tiver atribui o valor de ID para -1. Com o ID de -1 o cliente não será listado em nenhuma consulta.
 void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
-    int id, achou, opcao;
-    Funcionario funcionarioNovo;
-    printf("--------------+++ EXCLUSÃO FUNCIONARIO +++--------------\n");
+    int id = 0, achou = 0, opcao = 0;
+    printf("--------------+++ EXCLUSAO FUNCIONARIO +++--------------\n");
     printf("Entre com o ID do funcionario: ");
     scanf("%d", &id);
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
@@ -345,13 +339,13 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
             printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
-            printf("Salario funcionario: %f\n", funcionarios[i].salario);
+            printf("Salario funcionario: %.2f\n", funcionarios[i].salario);
             printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
             printf("E-mail funcionario: %s\n", funcionarios[i].email);
             printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
             printf("Cargo: %s\n", funcionarios[i].cargo);
             achou = 1;
-            printf("Deseja realmente excluir o funcionario\n0 - Cancelar \n1 - Excluir: ");
+            printf("Deseja realmente excluir o funcionario\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
             scanf("%d", &opcao);
             while (opcao != 1 && opcao != 0) {
                 printf("opcao invalida, tente novamente: ");
@@ -360,16 +354,14 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
             if (opcao == 1){
                 funcionarios[i].id = -1;
                 printf("Funcionario excluido com sucesso!");
-                getchar();
-                getchar();
             }
         }
     }
     if (achou == 0) {
         printf("Funcionario nao encontrado");
-        getchar();
-        getchar();
     }
+    getchar();
+    getchar();
 }
 
 // tela principal de gerenciamento de funcionários
@@ -378,14 +370,14 @@ void gerenciamentoFuncionario(Funcionario *funcionarios, int *quantidadeFunciona
     do {
         int quantidadeFuncionariosValor = *quantidadeFuncionarios;
         system("cls");
-        printf("--------------+++ GERENCIAMENTO DE FUNCIONARIOS +++--------------\n\n");
+        printf("--------------+++ GERENCIAMENTO DE FUNCIONARIOS +++--------------\n");
         printf("1 - Cadastrar um funcionario\n");
         printf("2 - Consultar funcionario\n");
         printf("3 - Consultar todos os funcionarios\n");
         printf("4 - Excluir funcionario\n");
-        printf("0 - Voltar ao menu\n\n");
-        printf("--------------------");
-        printf("\nEscolha sua opcao: ");
+        printf("0 - Voltar ao menu\n");
+        printf("--------------------\n");
+        printf("Escolha sua opcao: ");
         scanf("%d", &opcao);
 
         while (opcao > 4 || opcao < 0) {
@@ -428,18 +420,20 @@ void relatorio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrado
     double mediaSalario = 0.0;
     // é verificado em todos os funcionários cadastrados
     for (int i = 0; i < funcionariosCadastradosValor; i ++) {
-        mediaSalario += funcionariosCadastrados[i].salario;
+        if (funcionariosCadastrados[i].id >= 0) {
+            mediaSalario += funcionariosCadastrados[i].salario;
 
-        // caso o salario do funcionário for maior que o maior salario, o salário desse funcionário passa a ser o maior
-        if (funcionariosCadastrados[i].salario > maiorSalario) {
-            maiorSalario = funcionariosCadastrados[i].salario;
-            strcpy(nomeMaiorSalario, funcionariosCadastrados[i].nome);
-        } 
+            // caso o salario do funcionário for maior que o maior salario, o salário desse funcionário passa a ser o maior
+            if (funcionariosCadastrados[i].salario > maiorSalario) {
+                maiorSalario = funcionariosCadastrados[i].salario;
+                strcpy(nomeMaiorSalario, funcionariosCadastrados[i].nome);
+            } 
 
-        // caso o salario do funcionário for menor que o menor salario, o salário desse funcionário passa a ser o menor
-        if (funcionariosCadastrados[i].salario < menorSalario) {
-            menorSalario = funcionariosCadastrados[i].salario;
-            strcpy(nomeMenorSalario, funcionariosCadastrados[i].nome);
+            // caso o salario do funcionário for menor que o menor salario, o salário desse funcionário passa a ser o menor
+            if (funcionariosCadastrados[i].salario < menorSalario) {
+                menorSalario = funcionariosCadastrados[i].salario;
+                strcpy(nomeMenorSalario, funcionariosCadastrados[i].nome);
+            }
         }
     }
     mediaSalario /= funcionariosCadastradosValor;
@@ -456,14 +450,15 @@ void relatorio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrado
 
 // Menu principal
 void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario, int funcionarioLogado) {
-    int opcao;
+    int opcao = 0;
     do {
         system("cls");
         printf("--------------+++ MENU PRINCIPAL +++--------------\n");
         printf("1 - Gerenciamento de clientes\n");
         printf("2 - Gerenciamento de funcionarios\n");
         printf("3 - Acessar relatorios\n");
-        printf("0 - Desconectar\n\n");
+        printf("0 - Desconectar\n");
+        printf("--------------------\n");
         printf("Escolha sua opcao: ");
         scanf("%d", &opcao);
 
@@ -498,7 +493,7 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
 
 int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
     char senha[120], senhaConfirmar[120];
-    int opcao, id, achou = 0;
+    int opcao = 0, id = 0, achou = 0;
     // Pegando o valor da variável por seu endereço de memória(a variável quantidadeFuncionário é o ponteiro para esse endereço de memória)
     int quantidadeFuncionarioValor = *quantidadeFuncionario;
 
@@ -557,7 +552,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
 int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
     char login[100], senha[120];
     int quantidadeFuncionariosValor = *quantidadeFuncionarios;
-    int opcao, achou;
+    int opcao = 0, achou = 0;
 
     do {
         achou = 0;
@@ -588,7 +583,7 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
             printf("Usuario nao encontrado, deseja tentar novamente? (0 - sair, 1 - continuar): ");
             scanf("%d", &opcao);
             while(opcao != 0 && opcao != 1){
-                printf("Opcao incorreta, tente novamente");
+                printf("Opcao incorreta, tente novamente: ");
                 scanf("%d", &opcao);
             }
         }
@@ -598,18 +593,19 @@ int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
 
 void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario)
 {
-    int opcao;
+    int opcao = 0;
     int funcionarioLogado = 0;
     do {
         system("cls");
         printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
         printf("1 - Efetuar login\n");
         printf("2 - Esqueci senha\n");
-        printf("0 - Sair do programa\n\n");
+        printf("0 - Sair do programa\n");
+        printf("--------------------\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
         while(opcao > 2 || opcao < 0) {
-            printf("Opcao incorreta, tente novamente");
+            printf("Opcao incorreta, tente novamente: ");
             scanf("%d", &opcao);
         }
         system("cls");
@@ -635,7 +631,7 @@ void main() {
     // As variáveis são declaradas na main para que não sejam sobrescritas nos métodos. As variáveis quantidadeCliente e quantidadeFuncionarios são passadas por referência, isso é, o valor que é atribuido à elas nas funções é mantido independente da função.
     Cliente clientesCadastrados[1000];
     Funcionario funcionariosCadastrados[1000];
-    int quantidadeCliente;
+    int quantidadeCliente = 0;
     int quantidadeFuncionario = 2;
 
     inserirFuncionarios(funcionariosCadastrados);

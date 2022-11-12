@@ -247,6 +247,13 @@ void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) 
     scanf("%s", &funcionarios[quantidadeFuncionarios].cargo);
     printf("Entre com o login: ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].login);
+    // Verificando em todos os usuarios para caso algum funcionario tenha o mesmo login
+    for (int i = 0; i < quantidadeFuncionarios; i++) {
+        while (strcmp(funcionarios[i].login, funcionarios[quantidadeFuncionarios].login) == 0) {
+            printf("Login ja existe, insira outro login: ");
+            scanf("%s", &funcionarios[quantidadeFuncionarios].login);
+        }
+    }
     printf("Entre com a senha: ");
     scanf("%s", &funcionarios[quantidadeFuncionarios].senha);
     printf("Confirme a senha: ");
@@ -505,7 +512,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
         
         // Caso o id informado seja menor que 0  ou maior que a quantidade de funcionarios será considerado inválido
         while (id < 0 || id > quantidadeFuncionarioValor) {
-            printf("ID inválido, tente novamente: (-1 para cancelar): ");
+            printf("ID invalido, tente novamente: (-1 para cancelar): ");
             scanf("%d", &id);
             
             if (id == -1) {
@@ -524,18 +531,22 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
                 
                 // caso tenha é atribuido 1 para a variavel achou
                 achouFuncionario = 1;
-
+                
+                // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
                 printf("Usuario encontrado! E necessario a confirmacao do administrador para esta acao\n");
                 printf("Entre com o login do administrador: ");
                 scanf("%s", &loginAdmin);
                 
+                // é procurado em todos os funcionários para achar o administrador
                 for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
                     if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
                         achouAdmin = 1;
+                        // Caso ache, é atribuido o valor 1 para a variável administrador e é pedido a senha do administrador
                         printf("Entre com a senha do administrador: ");
                         scanf("%s", &senhaAdmin);
                         
                         if (strcmp(senhaAdmin, funcionarioCadastrados[j].senha) == 0) {
+                            // caso acerte a senha é pedido ao funcionário a nova senha
 
                             printf("Entre com sua nova senha: ");
                             scanf("%s", &senha);
@@ -558,6 +569,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
                             getchar();
                             return 0;
                         } else {
+                            //Caso erre a senha do administrador
                             printf("\nSenha incorreta!");
                             getchar();
                             getchar();
@@ -566,6 +578,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
                     }
                 }
                 if (achouAdmin == 0) {
+                    //Caso não ache o administrador, isso é, a variável achouAdmin for igual a 0
                     printf("\nAdministrador nao encontrado!");
                     getchar();
                     getchar();
@@ -573,6 +586,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
                 }
             }
         }
+        // caso não ache o funcionário, isso é, a variável achouFuncionario for igual a 0
         if (achouFuncionario == 0 ) {
             printf("Funcionario nao encontrado, deseja tentar novamente? (0 - sair, 1 - tentar novamente): ");
             scanf("%d", &opcao);

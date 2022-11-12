@@ -343,6 +343,12 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     scanf("%d", &id);
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id == id) {
+            if (strcmp(funcionarios[i].cargo, "Gerente") == 0) {
+                printf("Nao e possivel excluir um administrador");
+                getchar();
+                getchar();
+                return;
+            }
             printf("Nome funcionario: %s\n", funcionarios[i].nome);
             printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
             printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
@@ -367,7 +373,6 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     if (achou == 0) {
         printf("Funcionario nao encontrado");
     }
-    getchar();
     getchar();
 }
 

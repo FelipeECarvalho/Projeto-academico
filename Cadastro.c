@@ -492,8 +492,8 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
 }
 
 int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
-    char senha[120], senhaConfirmar[120];
-    int opcao = 0, id = 0, achou = 0;
+    char senha[120], senhaConfirmar[120], loginAdmin[100], senhaAdmin[120];
+    int opcao = 0, id = 0, achouFuncionario = 0, achouAdmin = 0;
     // Pegando o valor da variável por seu endereço de memória(a variável quantidadeFuncionário é o ponteiro para esse endereço de memória)
     int quantidadeFuncionarioValor = *quantidadeFuncionario;
 
@@ -515,31 +515,65 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFunciona
         // é verificado em todos os funcionários cadastrados para verificar se algum tem esse id
         for (int i = 0; i < quantidadeFuncionarioValor; i ++) {
             if (funcionarioCadastrados[i].id == id) {
-                // caso tenha é atribuido 1 para a variavel achou
-                achou = 1;
-                printf("Entre com sua nova senha: ");
-                scanf("%s", &senha);
-                
-                printf("Confirme sua senha: ");
-                scanf("%s", &senhaConfirmar);
-                
-                // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
-                while (strcmp(senha, senhaConfirmar) != 0) {
-                        printf("Senhas divergentes, tente novamente\n");
-                        printf("Entre com sua nova senha: ");
-                        scanf("%s", &senha);
-                        printf("Confirme sua senha: ");
-                        scanf("%s", &senhaConfirmar);
+                if (strcmp(funcionarioCadastrados[i].cargo, "Gerente") == 0) {
+                    printf("Nao e possivel alterar a senha do administrador");
+                    getchar();
+                    getchar();
+                    return 0;
                 }
+                
+                // caso tenha é atribuido 1 para a variavel achou
+                achouFuncionario = 1;
 
-                strcpy(funcionarioCadastrados[i].senha, senha);
-                printf("\nNova senha cadastrado com sucesso!");
-                getchar();
-                getchar();
-                return 0;
+                printf("Usuario encontrado! E necessario a confirmacao do administrador para esta acao\n");
+                printf("Entre com o login do administrador: ");
+                scanf("%s", &loginAdmin);
+                
+                for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
+                    if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
+                        achouAdmin = 1;
+                        printf("Entre com a senha do administrador: ");
+                        scanf("%s", &senhaAdmin);
+                        
+                        if (strcmp(senhaAdmin, funcionarioCadastrados[j].senha) == 0) {
+
+                            printf("Entre com sua nova senha: ");
+                            scanf("%s", &senha);
+                            
+                            printf("Confirme sua senha: ");
+                            scanf("%s", &senhaConfirmar);
+                            
+                            // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
+                            while (strcmp(senha, senhaConfirmar) != 0) {
+                                    printf("Senhas divergentes, tente novamente\n");
+                                    printf("Entre com sua nova senha: ");
+                                    scanf("%s", &senha);
+                                    printf("Confirme sua senha: ");
+                                    scanf("%s", &senhaConfirmar);
+                            }
+
+                            strcpy(funcionarioCadastrados[i].senha, senha);
+                            printf("\nNova senha cadastrado com sucesso!");
+                            getchar();
+                            getchar();
+                            return 0;
+                        } else {
+                            printf("\nSenha incorreta!");
+                            getchar();
+                            getchar();
+                            return 0;
+                        }
+                    }
+                }
+                if (achouAdmin == 0) {
+                    printf("\nAdministrador nao encontrado!");
+                    getchar();
+                    getchar();
+                    return 0;
+                }
             }
         }
-        if (achou == 0 ) {
+        if (achouFuncionario == 0 ) {
             printf("Funcionario nao encontrado, deseja tentar novamente? (0 - sair, 1 - tentar novamente): ");
             scanf("%d", &opcao);
         }

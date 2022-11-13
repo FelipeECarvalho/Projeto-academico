@@ -409,6 +409,7 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
         printf("Funcionario nao encontrado");
     }
     getchar();
+    getchar();
 }
 
 // tela principal de gerenciamento de funcionários
@@ -451,10 +452,15 @@ void gerenciamentoFuncionario(Funcionario *funcionarios, int chave, int *quantid
     } while (opcao != 0);
 }
 
-void relatorio(Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario) {
+void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario) {
     // Atribuindo o valor do local de memória no qual o ponteiro está apontando
+    // Total de clientes e funcionários, contando com os excluídos
     int clientesCadastradosValor = *quantidadeCliente;
     int funcionariosCadastradosValor = *quantidadeFuncionario;
+    
+    // Total de clientes e funcionários, sem contar os excluídos
+    int clientesValidos = 0;
+    int funcionariosValidos = 0;
    
     // Por padrão o maior e o menor salário é do primeiro usuário cadastrado, depois esse valor é modificado
     double maiorSalario = funcionariosCadastrados[0].salario;
@@ -468,6 +474,7 @@ void relatorio(Funcionario *funcionariosCadastrados, int *quantidadeCliente, int
     // é verificado em todos os funcionários cadastrados
     for (int i = 0; i < funcionariosCadastradosValor; i ++) {
         if (funcionariosCadastrados[i].id >= 0) {
+            funcionariosValidos++;
             mediaSalario += funcionariosCadastrados[i].salario;
 
             // caso o salario do funcionário for maior que o maior salario, o salário desse funcionário passa a ser o maior
@@ -483,10 +490,16 @@ void relatorio(Funcionario *funcionariosCadastrados, int *quantidadeCliente, int
             }
         }
     }
+
+    for (int i = 0; i < clientesCadastradosValor; i ++) {
+        if (clientesCadastrados[i].id != -1){
+            clientesValidos++;
+        }
+    }
     mediaSalario /= funcionariosCadastradosValor;
     printf("--------------+++ RELATORIO +++--------------\n");
-    printf("Total de clientes cadastrados: %d\n\n", clientesCadastradosValor);
-    printf("Total de funcionarios cadastrados: %d\n\n", funcionariosCadastradosValor);
+    printf("Total de clientes cadastrados: %d\n\n", clientesValidos);
+    printf("Total de funcionarios cadastrados: %d\n\n", funcionariosValidos);
     printf("O maior salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", maiorSalario, nomeMaiorSalario);
     printf("O menor salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", menorSalario, nomeMenorSalario);
     printf("A media de salarios cadastrados e de: %.2f", mediaSalario);
@@ -531,7 +544,7 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
                 }
                 break;
             case 3:
-                relatorio(funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
+                relatorio(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario);
                 break;
         }
     } while (opcao != 0);
@@ -588,7 +601,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantid
                         if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha, chave) == 0) {
                             // caso acerte a senha é pedido ao funcionário a nova senha
 
-                            printf("Entre com sua nova senha: ");
+                            printf("\nEntre com sua nova senha: ");
                             scanf("%s", funcionarioCadastrados[i].senha);
                             
                             printf("Confirme sua senha: ");
@@ -722,8 +735,9 @@ int main() {
     Funcionario funcionariosCadastrados[1000];
     int quantidadeCliente = 0;
     int quantidadeFuncionario = 2;
+    
     // Variável utilizada para fazer a criptografia das senhas cadastradas na tela de cadastro de funcionário
-    int chave = 42;
+    int chave = 0XAED;
 
     inserirFuncionarios(funcionariosCadastrados, chave);
     inicio(clientesCadastrados, funcionariosCadastrados, chave, &quantidadeCliente, &quantidadeFuncionario);      

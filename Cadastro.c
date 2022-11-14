@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <conio.h>
 
 // Criação de estrutura do cliente - Será utilizada tanto para cadastro quanto para listagem de clientes
 typedef struct cliente {
@@ -117,17 +118,49 @@ void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
     scanf("%s", clientes[quantidadeClientes].cursoMatriculado);
     system("cls");
     printf("Cliente cadastrado com sucesso!");
-    getchar();
-    getchar();
+    getch();
 }
 
 void consultarCliente(Cliente *clientes, int quantidadeClientes) {
-    int id = 0, achou = 0;
+    int id = 0, indice = 0;
     printf("--------------+++ CONSULTA CLIENTE +++--------------\n");
     printf("Entre com o ID do cliente: ");
     scanf("%d", &id);
     // Se a id for menor que 0 ou maior que o número de clientes será uma consulta inválida
-    while (id < 0 || id > quantidadeClientes) {
+    while (id <= 0 || id > quantidadeClientes) {
+        printf("ID invalido, tente novamente (0 - para sair): ");
+        scanf("%d", &id);
+        
+        if (id == 0) {
+            return;
+        }
+    }
+    // Pegando o cliente pelo id que o usuario digitou -1
+    indice = id - 1;
+    if (clientes[indice].id <= 0) {
+        printf("Cliente nao encontrado");
+        getch();
+        return;
+    }
+    printf("Nome cliente: %s\n", clientes[indice].nome);
+    printf("Sobrenome cliente: %s\n", clientes[indice].sobrenome);
+    printf("Cpf cliente: %s\n", clientes[indice].cpf);
+    printf("Data de nascimento cliente: %s\n", clientes[indice].dataNascimento);
+    printf("E-mail cliente: %s\n", clientes[indice].email);
+    printf("Telefone cliente: %s\n", clientes[indice].telefone);
+    printf("Curso matriculado: %s", clientes[indice].cursoMatriculado);
+    getch();
+}
+
+// É verificado em todos os clientes para caso algum tenha o id informado, se tiver atribui o valor de ID para -1. Com o ID de -1 o cliente não será listado em nenhuma consulta.
+void excluirCliente(Cliente *clientes, int quantidadeClientes) {
+    int id = 0, opcao = 0, indice = 0 ;
+    printf("--------------+++ EXCLUSAO CLIENTE +++--------------\n");
+    printf("Entre com o ID do cliente: ");
+    scanf("%d", &id);
+    
+    // Se a id for menor que 0 ou maior que o número de clientes será uma consulta inválida
+    while (id <= 0 || id > quantidadeClientes) {
         printf("ID invalido, tente novamente (0 - para sair): ");
         scanf("%d", &id);
         
@@ -136,63 +169,33 @@ void consultarCliente(Cliente *clientes, int quantidadeClientes) {
         }
     }
 
-    // Verificando em todos os clientes cadastrados para ver se algum tem o id que o usuário digitou
-    for (int i = 0; i < quantidadeClientes; i ++) {
-        if (clientes[i].id == id) {
-            printf("Nome cliente: %s\n", clientes[i].nome);
-            printf("Sobrenome cliente: %s\n", clientes[i].sobrenome);
-            printf("Cpf cliente: %s\n", clientes[i].cpf);
-            printf("Data de nascimento cliente: %s\n", clientes[i].dataNascimento);
-            printf("E-mail cliente: %s\n", clientes[i].email);
-            printf("Telefone cliente: %s\n", clientes[i].telefone);
-            printf("Curso matriculado: %s", clientes[i].cursoMatriculado);
-            
-            // caso encontre o usuário ele lista na tela e atribribui o valor 1 para a variável achou
-            achou = 1;
-        }
-    }
-    // se a variável achou for igual a 0, significa que não achou
-    if (achou == 0) {
+    indice = id - 1;
+    if (clientes[indice].id <= 0) {
         printf("Cliente nao encontrado");
+        getch();
+        return;
     }
-    getchar();
-    getchar();
 
-}
+    printf("Nome cliente: %s\n", clientes[indice].nome);
+    printf("Sobrenome cliente: %s\n", clientes[indice].sobrenome);
+    printf("Cpf cliente: %s\n", clientes[indice].cpf);
+    printf("Data de nascimento cliente: %s\n", clientes[indice].dataNascimento);
+    printf("E-mail cliente: %s\n", clientes[indice].email);
+    printf("Telefone cliente: %s\n", clientes[indice].telefone);
+    printf("Curso matriculado: %s\n\n", clientes[indice].cursoMatriculado);
+    
+    printf("Deseja realmente excluir o cliente\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
+    scanf("%d", &opcao);
+    while (opcao != 1 && opcao != 0) {
+        printf("opcao invalida, tente novamente: ");
+        scanf("%d", &opcao);
+    }
 
-// É verificado em todos os clientes para caso algum tenha o id informado, se tiver atribui o valor de ID para -1. Com o ID de -1 o cliente não será listado em nenhuma consulta.
-void excluirCliente(Cliente *clientes, int quantidadeClientes) {
-    int id = 0, achou = 0, opcao = 0;
-    printf("--------------+++ EXCLUSAO CLIENTE +++--------------\n");
-    printf("Entre com o ID do cliente: ");
-    scanf("%d", &id);
-    for (int i = 0; i < quantidadeClientes; i ++) {
-        if (clientes[i].id == id) {
-            printf("Nome cliente: %s\n", clientes[i].nome);
-            printf("Sobrenome cliente: %s\n", clientes[i].sobrenome);
-            printf("Cpf cliente: %s\n", clientes[i].cpf);
-            printf("Data de nascimento cliente: %s\n", clientes[i].dataNascimento);
-            printf("E-mail cliente: %s\n", clientes[i].email);
-            printf("Telefone cliente: %s\n", clientes[i].telefone);
-            printf("Curso matriculado: %s\n\n", clientes[i].cursoMatriculado);
-            achou = 1;
-            printf("Deseja realmente excluir o cliente\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
-            scanf("%d", &opcao);
-            while (opcao != 1 && opcao != 0) {
-                printf("opcao invalida, tente novamente: ");
-                scanf("%d", &opcao);
-            }
-            if (opcao == 1){
-                clientes[i].id = -1;
-                printf("Cliente excluido com sucesso!");
-            }
-        }
+    if (opcao == 1){
+        clientes[indice].id = -1;
+        printf("Cliente excluido com sucesso!");
+        getch();
     }
-    if (achou == 0) {
-        printf("Cliente nao encontrado");
-    }
-    getchar();
-    getchar();
 }
 
 // Listagem de todos os clientes cadastrados, menos os que tem o id de -1, que são os excluídos.
@@ -211,8 +214,7 @@ void consultarClientes(Cliente *clientes, int quantidadeClientes) {
             printf("---------------------------------------------------------\n");
         }
     }
-    getchar();
-    getchar();
+    getch();
 }
 
 // Tela principal do gerenciamento de clientes.
@@ -221,7 +223,7 @@ void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
     do {
         int quantidadeClientesValor = *quantidadeClientes;
         system("cls");
-        printf("--------------+++ GERENCIAMENTO DE CLIENTES +++--------------\n");
+        printf("--------------+++ GERENCIAMENTO DE CLIENTES +++--------------\n"); 
         printf("1 - Cadastrar um cliente\n");
         printf("2 - Consultar cliente\n");
         printf("3 - Consultar todos os clientes\n");
@@ -304,17 +306,17 @@ void cadastroFuncionario(Funcionario *funcionarios, int chave, int quantidadeFun
 
     system("cls");
     printf("Funcionario cadastrado com sucesso!");
-    getchar();
-    getchar();
+    getch();
 }
 
 void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
-    int id = 0, achou = 0;
+    int id = 0, indice = 0;
     printf("--------------+++ CONSULTA FUNCIONARIO +++--------------\n");
     printf("Entre com o ID do funcionario: ");
     scanf("%d", &id);
+    
     // Se a id for menor que 0 ou maior que o número de funcionários será uma consulta inválida
-    while (id < 0 || id > quantidadeFuncionarios) {
+    while (id <= 0 || id > quantidadeFuncionarios) {
         printf("ID invalido, tente novamente (0 - para sair): ");
         scanf("%d", &id);
 
@@ -324,34 +326,27 @@ void consultarFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios)
     }
     
     // Verificando em todos os funcionários cadastrados para ver se algum tem o id que o usuário digitou
-    for (int i = 0; i < quantidadeFuncionarios; i ++) {
-        if (funcionarios[i].id == id) {
-            printf("Nome funcionario: %s\n", funcionarios[i].nome);
-            printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
-            printf("Salario funcionario: %.2f\n", funcionarios[i].salario);
-            printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
-            printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
-            printf("E-mail funcionario: %s\n", funcionarios[i].email);
-            printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
-            printf("Cargo: %s\n", funcionarios[i].cargo);
-            // caso encontre o usuário ele lista na tela e atribribui o valor 1 para a variável achou
-            achou = 1;
-        }
-    }
-
-    // se a variável achou for igual a 0, significa que não achou
-    if (achou == 0) {
+    indice = id - 1;
+    if (funcionarios[indice].id <= 0) {
         printf("Funcionario nao encontrado");
+        getch();
+        return;
     }
-    getchar();
-    getchar();
 
+    printf("Nome funcionario: %s\n", funcionarios[indice].nome);
+    printf("Sobrenome funcionario: %s\n", funcionarios[indice].sobrenome);
+    printf("Salario funcionario: %.2f\n", funcionarios[indice].salario);
+    printf("Cpf funcionario: %s\n", funcionarios[indice].cpf);
+    printf("Data de nascimento funcionario: %s\n", funcionarios[indice].dataNascimento);
+    printf("E-mail funcionario: %s\n", funcionarios[indice].email);
+    printf("Telefone funcionario: %s\n", funcionarios[indice].telefone);
+    printf("Cargo: %s\n", funcionarios[indice].cargo);    
+    getch();
 }
 
 // Listagem de todos os funcionários cadastrados, menos os que tem o id de -1, que são os excluídos.
 void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios) {
     printf("--------------+++ CONSULTA FUNCIONARIOS +++--------------\n");
-    
     for (int i = 0; i < quantidadeFuncionarios; i ++) {
         if (funcionarios[i].id != -1 ) {
             printf("Id funcionario: %d\n", funcionarios[i].id);
@@ -366,50 +361,60 @@ void consultarFuncionarios(Funcionario *funcionarios, int quantidadeFuncionarios
             printf("---------------------------------------------------------\n");
         }
     }
-    getchar();
-    getchar();
+    getch();
 }
 
 // É verificado em todos os clientes para caso algum tenha o id informado, se tiver atribui o valor de ID para -1. Com o ID de -1 o cliente não será listado em nenhuma consulta.
 void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
-    int id = 0, achou = 0, opcao = 0;
+    int id = 0, opcao = 0, indice = 0;
     printf("--------------+++ EXCLUSAO FUNCIONARIO +++--------------\n");
     printf("Entre com o ID do funcionario: ");
     scanf("%d", &id);
-    for (int i = 0; i < quantidadeFuncionarios; i ++) {
-        if (funcionarios[i].id == id) {
-            if (strcmp(funcionarios[i].cargo, "Gerente") == 0) {
-                printf("Nao e possivel excluir um administrador");
-                getchar();
-                getchar();
-                return;
-            }
-            printf("Nome funcionario: %s\n", funcionarios[i].nome);
-            printf("Sobrenome funcionario: %s\n", funcionarios[i].sobrenome);
-            printf("Cpf funcionario: %s\n", funcionarios[i].cpf);
-            printf("Salario funcionario: %.2f\n", funcionarios[i].salario);
-            printf("Data de nascimento funcionario: %s\n", funcionarios[i].dataNascimento);
-            printf("E-mail funcionario: %s\n", funcionarios[i].email);
-            printf("Telefone funcionario: %s\n", funcionarios[i].telefone);
-            printf("Cargo: %s\n", funcionarios[i].cargo);
-            achou = 1;
-            printf("Deseja realmente excluir o funcionario\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
-            scanf("%d", &opcao);
-            while (opcao != 1 && opcao != 0) {
-                printf("opcao invalida, tente novamente: ");
-                scanf("%d", &opcao);
-            }
-            if (opcao == 1){
-                funcionarios[i].id = -1;
-                printf("Funcionario excluido com sucesso!");
-            }
+    
+    // Se a id for menor que 0 ou maior que o número de funcionários será uma consulta inválida
+    while (id <= 0 || id > quantidadeFuncionarios) {
+        printf("ID invalido, tente novamente (0 - para sair): ");
+        scanf("%d", &id);
+        
+        if (id == 0) {
+            return;
         }
     }
-    if (achou == 0) {
+
+    indice = id - 1;
+    if (funcionarios[indice].id <= 0) {
         printf("Funcionario nao encontrado");
+        getch();
+        return;
     }
-    getchar();
-    getchar();
+
+    if (strcmp(funcionarios[indice].cargo, "Gerente") == 0) {
+        printf("Nao e possivel excluir um administrador");
+        getch();
+        return;
+    }
+
+    printf("Nome funcionario: %s\n", funcionarios[indice].nome);
+    printf("Sobrenome funcionario: %s\n", funcionarios[indice].sobrenome);
+    printf("Cpf funcionario: %s\n", funcionarios[indice].cpf);
+    printf("Salario funcionario: %.2f\n", funcionarios[indice].salario);
+    printf("Data de nascimento funcionario: %s\n", funcionarios[indice].dataNascimento);
+    printf("E-mail funcionario: %s\n", funcionarios[indice].email);
+    printf("Telefone funcionario: %s\n", funcionarios[indice].telefone);
+    printf("Cargo: %s\n", funcionarios[indice].cargo);
+    printf("Deseja realmente excluir o funcionario\n0 - Cancelar \n1 - Excluir\nSua opcao: ");
+    scanf("%d", &opcao);
+    
+    while (opcao != 1 && opcao != 0) {
+        printf("opcao invalida, tente novamente: ");
+        scanf("%d", &opcao);
+    }
+    
+    if (opcao == 1){
+        funcionarios[indice].id = -1;
+        printf("Funcionario excluido com sucesso!");
+        getch();
+    }
 }
 
 // tela principal de gerenciamento de funcionários
@@ -465,15 +470,17 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
     // Por padrão o maior e o menor salário é do primeiro usuário cadastrado, depois esse valor é modificado
     double maiorSalario = funcionariosCadastrados[0].salario;
     double menorSalario = funcionariosCadastrados[0].salario;
+    
     char nomeMaiorSalario[100];
     char nomeMenorSalario[100];
+    
     strcpy(nomeMaiorSalario, funcionariosCadastrados[0].nome);
     strcpy(nomeMenorSalario, funcionariosCadastrados[0].nome);
     
     double mediaSalario = 0.0;
     // é verificado em todos os funcionários cadastrados
     for (int i = 0; i < funcionariosCadastradosValor; i ++) {
-        if (funcionariosCadastrados[i].id >= 0) {
+        if (funcionariosCadastrados[i].id > 0) {
             funcionariosValidos++;
             mediaSalario += funcionariosCadastrados[i].salario;
 
@@ -492,10 +499,11 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
     }
 
     for (int i = 0; i < clientesCadastradosValor; i ++) {
-        if (clientesCadastrados[i].id != -1){
+        if (clientesCadastrados[i].id > 0){
             clientesValidos++;
         }
     }
+
     mediaSalario /= funcionariosCadastradosValor;
     printf("--------------+++ RELATORIO +++--------------\n");
     printf("Total de clientes cadastrados: %d\n\n", clientesValidos);
@@ -504,8 +512,7 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
     printf("O menor salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", menorSalario, nomeMenorSalario);
     printf("A media de salarios cadastrados e de: %.2f", mediaSalario);
 
-    getchar();
-    getchar();
+    getch();
 }
 
 // Menu principal
@@ -539,8 +546,7 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
                     gerenciamentoFuncionario(funcionariosCadastrados, chave, quantidadeFuncionario);
                 } else {
                     printf("Voce nao tem permissao para gerenciar funcionarios");
-                    getchar();
-                    getchar();
+                    getch();
                 }
                 break;
             case 3:
@@ -553,10 +559,10 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
 
 int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantidadeFuncionario) {
     char senhaConfirmar[120], loginAdmin[100], senhaAdmin[120];
-    int opcao = 0, id = 0, achouFuncionario = 0, achouAdmin = 0;
+    int opcao = 0, id = 0, achouAdmin = 0, indice = 0;
+    
     // Pegando o valor da variável por seu endereço de memória(a variável quantidadeFuncionário é o ponteiro para esse endereço de memória)
     int quantidadeFuncionarioValor = *quantidadeFuncionario;
-
     do {
         system("cls");
         printf("--------------+++ RECUPERAR SENHA +++--------------\n");
@@ -564,88 +570,78 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantid
         scanf("%d", &id);
         
         // Caso o id informado seja menor que 0  ou maior que a quantidade de funcionarios será considerado inválido
-        while (id < 0 || id > quantidadeFuncionarioValor) {
-            printf("ID invalido, tente novamente: (-1 para cancelar): ");
+        while (id <= 0 || id > quantidadeFuncionarioValor) {
+            printf("ID invalido, tente novamente: (0 - para cancelar): ");
             scanf("%d", &id);
             
-            if (id == -1) {
+            if (id == 0) {
                 return 0;
             }
         }
-        // é verificado em todos os funcionários cadastrados para verificar se algum tem esse id
-        for (int i = 0; i < quantidadeFuncionarioValor; i ++) {
-            if (funcionarioCadastrados[i].id == id) {
-                if (strcmp(funcionarioCadastrados[i].cargo, "Gerente") == 0) {
-                    printf("Nao e possivel alterar a senha do administrador");
-                    getchar();
-                    getchar();
+
+        indice = id - 1;
+        if (funcionarioCadastrados[indice].id <= 0) {
+            printf("Funcionario nao encontrado");
+            getch();
+            return 0;
+        }
+        
+        if (strcmp(funcionarioCadastrados[indice].cargo, "Gerente") == 0) {
+            printf("Nao e possivel alterar a senha do administrador");
+            getch();
+            return 0;
+        }
+
+        // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
+        printf("Usuario encontrado! E necessario a confirmacao do administrador para esta acao\n");
+        printf("Entre com o login do administrador: ");
+        scanf("%s", loginAdmin);
+
+        // é procurado em todos os funcionários para achar o administrador
+        for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
+            if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
+                achouAdmin = 1;
+                // Caso ache, é atribuido o valor 1 para a variável administrador e é pedido a senha do administrador
+                printf("Entre com a senha do administrador: ");
+                scanf("%s", senhaAdmin);
+                
+                if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha, chave) != 0) {
+                    //Caso erre a senha do administrador
+                    printf("\nSenha incorreta!");
+                    getch();
                     return 0;
                 }
+                // caso acerte a senha é pedido ao funcionário a nova senha
+                printf("\nEntre com sua nova senha: ");
+                scanf("%s", funcionarioCadastrados[indice].senha);
                 
-                // caso tenha é atribuido 1 para a variavel achou
-                achouFuncionario = 1;
+                printf("Confirme sua senha: ");
+                scanf("%s", senhaConfirmar);
                 
-                // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
-                printf("Usuario encontrado! E necessario a confirmacao do administrador para esta acao\n");
-                printf("Entre com o login do administrador: ");
-                scanf("%s", loginAdmin);
-                
-                // é procurado em todos os funcionários para achar o administrador
-                for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
-                    if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
-                        achouAdmin = 1;
-                        // Caso ache, é atribuido o valor 1 para a variável administrador e é pedido a senha do administrador
-                        printf("Entre com a senha do administrador: ");
-                        scanf("%s", senhaAdmin);
-                        
-                        if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha, chave) == 0) {
-                            // caso acerte a senha é pedido ao funcionário a nova senha
-
-                            printf("\nEntre com sua nova senha: ");
-                            scanf("%s", funcionarioCadastrados[i].senha);
-                            
-                            printf("Confirme sua senha: ");
-                            scanf("%s", senhaConfirmar);
-                            
-                            // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
-                            while (strcmp(senhaConfirmar, funcionarioCadastrados[i].senha) != 0) {
-                                    printf("Senhas divergentes, tente novamente\n");
-                                    printf("Entre com sua nova senha: ");
-                                    scanf("%s", funcionarioCadastrados[i].senha);
-                                    printf("Confirme sua senha: ");
-                                    scanf("%s", senhaConfirmar);
-                            }
-
-                            criptografar(funcionarioCadastrados[i].senha, chave);
-                            printf("\nNova senha cadastrada com sucesso!");
-                            getchar();
-                            getchar();
-                            return 0;
-                        } else {
-                            //Caso erre a senha do administrador
-                            printf("\nSenha incorreta!");
-                            getchar();
-                            getchar();
-                            return 0;
-                        }
-                    }
+                // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
+                while (strcmp(senhaConfirmar, funcionarioCadastrados[indice].senha) != 0) {
+                        printf("Senhas divergentes, tente novamente\n");
+                        printf("Entre com sua nova senha: ");
+                        scanf("%s", funcionarioCadastrados[indice].senha);
+                        printf("Confirme sua senha: ");
+                        scanf("%s", senhaConfirmar);
                 }
-                if (achouAdmin == 0) {
-                    //Caso não ache o administrador, isso é, a variável achouAdmin for igual a 0
-                    printf("\nAdministrador nao encontrado!");
-                    getchar();
-                    getchar();
-                    return 0;
-                }
+
+                criptografar(funcionarioCadastrados[indice].senha, chave);
+                printf("\nNova senha cadastrada com sucesso!");
+                getch();
+                return 0;
             }
         }
-        // caso não ache o funcionário, isso é, a variável achouFuncionario for igual a 0
-        if (achouFuncionario == 0 ) {
-            printf("Funcionario nao encontrado, deseja tentar novamente? (0 - sair, 1 - tentar novamente): ");
-            scanf("%d", &opcao);
+
+        //Caso não ache o administrador, isso é, a variável achouAdmin for igual a 0
+        if (achouAdmin == 0) {
+            printf("\nAdministrador nao encontrado!");
+            getch();
+            return 0;
         }
     } while(opcao != 0);
-    return 0;
+    return 0;      
 }
 
 
@@ -674,8 +670,7 @@ int login(Funcionario *funcionarioCadastrados, int chave, int *quantidadeFuncion
                         return i;
                     } else {
                         printf("Senha incorreta");
-                        getchar();
-                        getchar();
+                        getch();
                     }
                 }
         }
@@ -733,9 +728,11 @@ int main() {
     // As variáveis são declaradas na main para que não sejam sobrescritas nos métodos. As variáveis quantidadeCliente e quantidadeFuncionarios são passadas por referência, isso é, o valor que é atribuido à elas nas funções é mantido independente da função.
     Cliente clientesCadastrados[1000];
     Funcionario funcionariosCadastrados[1000];
+    
+    // Variáveis para controlar a quantidade de clientes e funcionários cadastrados
     int quantidadeCliente = 0;
     int quantidadeFuncionario = 2;
-    
+
     // Variável utilizada para fazer a criptografia das senhas cadastradas na tela de cadastro de funcionário
     int chave = 0XAED;
 

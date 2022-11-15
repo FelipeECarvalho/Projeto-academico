@@ -3,6 +3,10 @@
 #include <string.h>
 #include <conio.h>
 
+const int CHAVE = 0XAED;   // Constante utilizada para fazer a criptografia das senhas cadastradas na tela de cadastro de funcionário
+const char *ARQUIVO_CLIENTE = "arquivoClientes.txt"; // Constante utilizada para nomear o arquivo de salvamento de clientes
+const char *ARQUIVO_FUNCIONARIO = "arquivoFuncionarios.txt"; // Constante utilizada para nomear o arquivo de salvamento de funcionários
+
 // Criação de estrutura do cliente - Será utilizada tanto para cadastro quanto para listagem de clientes
 typedef struct cliente {
     int id;
@@ -32,18 +36,18 @@ typedef struct funcionario {
 }
 Funcionario;
 
-// Método responsável por criptografar a senha utilizando a chave informada (parâmetro chave) e inserir no campo informado (parâmetro senhaParaCriptografar)
-void criptografar(char *senhaParaCriptografar, int chave) {
+// Método responsável por criptografar a senha utilizando a chave e inserir no campo informado (parâmetro senhaParaCriptografar)
+void criptografar(char *senhaParaCriptografar) {
     int tamanhoSenha = strlen(senhaParaCriptografar);
 
     for (int i = 0; i < tamanhoSenha; i ++) {
         // É usado o código ASCII do caractere da senha e somado pela chave
-        senhaParaCriptografar[i] = senhaParaCriptografar[i] + chave;
+        senhaParaCriptografar[i] = senhaParaCriptografar[i] + CHAVE;
     }
 }
 
 // Método que faz a verificação de igualdade entre senhas. Caso as senhas correspondam é retornado 0, caso contrário é retornado 1
-int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario, int chave) {
+int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario) {
     // Recuperando o tamanho da senha criptografada
     int tamanhoSenha = strlen(senhaFuncionario);
     int tamanhoSenhaParaVerificar = strlen(senhaParaVerificar);
@@ -55,7 +59,7 @@ int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario, int chave) 
 
     for (int i = 0; i < tamanhoSenha; i ++) {
         // criptografando o caractere para a verificação
-        char senha = senhaParaVerificar[i] + chave;
+        char senha = senhaParaVerificar[i] + CHAVE;
         
         // se algum caractere da senha informada pelo usuário for diferente da cadastrado pelo funcionário é considerado inválido
         if (senha != senhaFuncionario[i]) {
@@ -66,7 +70,7 @@ int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario, int chave) 
 }
 
 // Funcao feita para abrir o arquivo
-FILE * abrirArquivo(char *nomeArquivo, char *funcaoArquivo) {
+FILE * abrirArquivo(const char *nomeArquivo, char *funcaoArquivo) {
     // Abertura do arquivo que contém os dados
     FILE *arquivo = fopen(nomeArquivo, funcaoArquivo);
 
@@ -84,11 +88,11 @@ FILE * abrirArquivo(char *nomeArquivo, char *funcaoArquivo) {
 }
 
 // Método utilizado para inserir os funcionários iniciais para o funcionamento do programa
-void inserirFuncionarios(int chave) {
+void inserirFuncionarios() {
     Funcionario admin;
 
     // Abro ou crio o arquivo para leitura (rb)
-    FILE *arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "rb");
+    FILE *arquivoFuncionarios = abrirArquivo(ARQUIVO_FUNCIONARIO, "rb");
     
     // Leio o primeiro funcionário cadastrado
     fread(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
@@ -109,14 +113,14 @@ void inserirFuncionarios(int chave) {
     strcpy(admin.dataNascimento, "09-10-1999");
     strcpy(admin.login, "admin");
     strcpy(admin.senha, "admin");
-    criptografar(admin.senha, chave);
+    criptografar(admin.senha);
     strcpy(admin.telefone, "12999999999");
     strcpy(admin.nome, "Carlos");
     strcpy(admin.sobrenome, "Almeida");
     strcpy(admin.email, "carlos@email.com");
 
     // Abro o arquivo para escrita
-    arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "wb");
+    arquivoFuncionarios = abrirArquivo(ARQUIVO_FUNCIONARIO, "wb");
 
     // Escrevo no arquivo o funcionário admin
     fwrite(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
@@ -287,7 +291,7 @@ void gerenciamentoClientes(Cliente *clientes, int *quantidadeClientes) {
 
 // Cadastro de funcionários
 // Os funcionários cadastrados aqui poderão realizar login no sistema. Para isso é necessário escolher a opção desconectar do menu principal e realizar o login com o login e a senha informados no cadastro
-void cadastroFuncionario(Funcionario *funcionarios, int chave, int quantidadeFuncionarios) {
+void cadastroFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
     char confirmarSenha[120];
     funcionarios[quantidadeFuncionarios].id = quantidadeFuncionarios + 1;
     // O Id do funcionários será a quantidade de funcionários + 1, para que assim não exista funcionário de ID = 0
@@ -330,7 +334,7 @@ void cadastroFuncionario(Funcionario *funcionarios, int chave, int quantidadeFun
         printf("Confirme a senha: ");
         scanf("%s", confirmarSenha);
     }
-    criptografar(funcionarios[quantidadeFuncionarios].senha, chave);
+    criptografar(funcionarios[quantidadeFuncionarios].senha);
 
     system("cls");
     printf("Funcionario cadastrado com sucesso!");
@@ -446,7 +450,7 @@ void excluirFuncionario(Funcionario *funcionarios, int quantidadeFuncionarios) {
 }
 
 // tela principal de gerenciamento de funcionários
-void gerenciamentoFuncionario(Funcionario *funcionarios, int chave, int *quantidadeFuncionarios) {
+void gerenciamentoFuncionario(Funcionario *funcionarios, int *quantidadeFuncionarios) {
     int opcao;
     do {
         int quantidadeFuncionariosValor = *quantidadeFuncionarios;
@@ -468,7 +472,7 @@ void gerenciamentoFuncionario(Funcionario *funcionarios, int chave, int *quantid
         system("cls");
         switch (opcao) {
             case 1:
-                cadastroFuncionario(funcionarios, chave, quantidadeFuncionariosValor);
+                cadastroFuncionario(funcionarios, quantidadeFuncionariosValor);
                 (*quantidadeFuncionarios) ++;
                 // após o cadastro de funcionário a variável quantidade funcionario é aumentada em um
                 break;
@@ -544,11 +548,12 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
 }
 
 // Menu principal
-void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int chave, int *quantidadeCliente, int *quantidadeFuncionario, int funcionarioLogado) {
+void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario, Funcionario funcionarioLogado) {
     int opcao = 0;
     do {
         system("cls");
-        printf("--------------+++ MENU PRINCIPAL +++--------------\n");
+        printf("--------------+++ MENU PRINCIPAL +++--------------\n\n");
+        printf("Ola %s, Bom dia!\n\n", funcionarioLogado.nome);
         printf("1 - Gerenciamento de clientes\n");
         printf("2 - Gerenciamento de funcionarios\n");
         printf("3 - Acessar relatorios\n");
@@ -570,8 +575,8 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
                 break;
             case 2:
                 // caso o funcionário que fez login não é um gerente ele  não poderá fazer o gerenciamento de funcionários
-                if (strcmp("Gerente", funcionariosCadastrados[funcionarioLogado].cargo) == 0) {
-                    gerenciamentoFuncionario(funcionariosCadastrados, chave, quantidadeFuncionario);
+                if (strcmp("Gerente", funcionarioLogado.cargo) == 0) {
+                    gerenciamentoFuncionario(funcionariosCadastrados, quantidadeFuncionario);
                 } else {
                     printf("Voce nao tem permissao para gerenciar funcionarios");
                     getch();
@@ -585,7 +590,7 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
     return;
 }
 
-int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantidadeFuncionario) {
+int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
     char senhaConfirmar[120], loginAdmin[100], senhaAdmin[120];
     int opcao = 0, id = 0, achouAdmin = 0, indice = 0;
     
@@ -633,7 +638,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantid
                 printf("Entre com a senha do administrador: ");
                 scanf("%s", senhaAdmin);
                 
-                if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha, chave) != 0) {
+                if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha) != 0) {
                     //Caso erre a senha do administrador
                     printf("\nSenha incorreta!");
                     getch();
@@ -655,7 +660,7 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantid
                         scanf("%s", senhaConfirmar);
                 }
 
-                criptografar(funcionarioCadastrados[indice].senha, chave);
+                criptografar(funcionarioCadastrados[indice].senha);
                 printf("\nNova senha cadastrada com sucesso!");
                 getch();
                 return 0;
@@ -672,53 +677,57 @@ int recuperarSenhar(Funcionario *funcionarioCadastrados, int chave, int *quantid
     return 0;      
 }
 
-
-// caso encontre o funcionário, e o usuário digite corretamente o login e a senha, é retornado o id do funcionário que foi logado
-int login(Funcionario *funcionarioCadastrados, int chave, int *quantidadeFuncionarios) {
+Funcionario login() {
+    Funcionario funcionario;
+    Funcionario funcionarioVazio;
+    
+    int opcao = 0;
+    funcionarioVazio.id = 0;
     char login[100], senha[120];
-    int quantidadeFuncionariosValor = *quantidadeFuncionarios;
-    int opcao = 0, achou = 0;
 
     do {
-        achou = 0;
+        FILE *arquivoFuncionario = abrirArquivo(ARQUIVO_FUNCIONARIO, "rb");
+        
         system("cls");
         printf("--------------+++ TELA DE LOGIN +++--------------\n");
-        printf("Entre com o login: ");
+        
+        printf("Login: ");
         scanf("%s", login);
-        // é verificado em todos os funcionários(funcionários não excluídos, isso é, funcionários que tenham o id diferente de -1) cadastrados para caso algum tenha o o mesmo login que o usuário informou
-        for (int i = 0; i < quantidadeFuncionariosValor; i ++) {
-                if (funcionarioCadastrados[i].id != -1 && strcmp(funcionarioCadastrados[i].login, login) == 0) {
-                    // caso tenha, é atribuido o valor 1 para a variável achou.
-                    achou = 1;
-                    printf("Entre com a senha: ");
-                    scanf("%s", senha);
-                    
-                    // Se a senha do funcionário for igual a que o usuário digitou é retornado a posicao dele
-                    if (verificarSenha(senha, funcionarioCadastrados[i].senha, chave) == 0) {
-                        return i;
-                    } else {
-                        printf("Senha incorreta");
-                        getch();
-                    }
-                }
-        }
-        if (achou == 0) {
-            // Se nao encontrou exibi a opcão de tentar novamente ou desistir
-            printf("Usuario nao encontrado, deseja tentar novamente? (0 - sair, 1 - continuar): ");
-            scanf("%d", &opcao);
-            while(opcao != 0 && opcao != 1){
-                printf("Opcao incorreta, tente novamente: ");
-                scanf("%d", &opcao);
+        
+        while (fread(&funcionario, sizeof(Funcionario), 1, arquivoFuncionario)) {
+            if (strcmp(funcionario.login, login) != 0) {
+                continue;
             }
+
+            fclose(arquivoFuncionario);
+
+            printf("Senha: ");
+            scanf("%s", senha);
+
+            if (verificarSenha(senha, funcionario.senha) != 0) {
+                printf("Senha incorreta!");
+                getch();
+
+                return funcionarioVazio;
+            }
+            
+            return funcionario;
         }
-    } while(opcao != 0);
-    return -1;
+        fclose(arquivoFuncionario);
+
+        system("cls");
+        printf("Login incorreto, deseja tentar novamente?\n( 0 - Sair, 1 - Tentar novamente): ");
+        scanf("%d", &opcao);
+
+    } while (opcao != 0);
+
+    return funcionarioVazio;
 }
 
-void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int chave, int *quantidadeCliente, int *quantidadeFuncionario)
+void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario)
 {
     int opcao = 0;
-    int funcionarioLogado = 0;
+    Funcionario funcionarioLogado;
     do {
         system("cls");
         printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
@@ -736,16 +745,15 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         switch (opcao)
         {
             case 1:
-                // caso a tela de login retorne um valor difente de -1, isso é, o usuário digitou corretamento o login e a senha, é redirecionado para o menu.
                 // a variável usuario logado será utilizada para fazer o controle entre a permissão de acesso entre determinadas funcionalidades
-                funcionarioLogado = login(funcionariosCadastrados, chave, quantidadeFuncionario);
-                
-                if (funcionarioLogado != -1) {
-                    menu(clientesCadastrados, funcionariosCadastrados, chave, quantidadeCliente, quantidadeFuncionario, funcionarioLogado);
+                funcionarioLogado = login();
+
+                if (funcionarioLogado.id > 0) {
+                    menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario, funcionarioLogado);
                 } 
                 break;
             case 2:
-                recuperarSenhar(funcionariosCadastrados, chave, quantidadeFuncionario);
+                recuperarSenhar(funcionariosCadastrados, quantidadeFuncionario);
                 break;
         }
 
@@ -761,9 +769,6 @@ int main() {
     int quantidadeCliente = 0;
     int quantidadeFuncionario = 2;
 
-    // Variável utilizada para fazer a criptografia das senhas cadastradas na tela de cadastro de funcionário
-    int chave = 0XAED;
-
-    inserirFuncionarios(chave);
-    inicio(clientesCadastrados, funcionariosCadastrados, chave, &quantidadeCliente, &quantidadeFuncionario);      
+    inserirFuncionarios();
+    inicio(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);      
 }

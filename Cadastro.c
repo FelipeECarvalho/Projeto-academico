@@ -37,7 +37,7 @@ void criptografar(char *senhaParaCriptografar, int chave) {
     int tamanhoSenha = strlen(senhaParaCriptografar);
 
     for (int i = 0; i < tamanhoSenha; i ++) {
-        // É usado o código ASCII do caractere da senha e multiplicado pela chave
+        // É usado o código ASCII do caractere da senha e somado pela chave
         senhaParaCriptografar[i] = senhaParaCriptografar[i] + chave;
     }
 }
@@ -65,36 +65,60 @@ int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario, int chave) 
     return 0;
 }
 
+// Funcao feita para abrir o arquivo
+FILE * abrirArquivo (char *nomeArquivo, char *funcaoArquivo) {
+    // Abertura do arquivo que contém os dados
+    FILE *arquivo = fopen(nomeArquivo, funcaoArquivo);
+
+    // se o arquivo for nulo, significa que ocorreu um erro
+    if (arquivo == NULL) {
+        printf("Nao foi possivel abrir o arquivo %s: %s", nomeArquivo, strerror(errno));
+        exit(1);
+    }
+    // retorno do arquivo já aberto para leitura/escrita
+    return arquivo;
+}
+
 // Método utilizado para inserir os funcionários iniciais para o funcionamento do programa
-void inserirFuncionarios(Funcionario *funcionarios, int chave) {
-    // Inserção do funcionário gerente
-    funcionarios[0].id = 1;
-    funcionarios[0].salario = 5000.00;
-    strcpy(funcionarios[0].cpf, "123.321.123-90");
-    strcpy(funcionarios[0].cargo, "Gerente");
-    strcpy(funcionarios[0].dataNascimento, "09-10-1999");
-    strcpy(funcionarios[0].login, "admin");
-    strcpy(funcionarios[0].senha, "admin");
-    criptografar(funcionarios[0].senha, chave);
-    strcpy(funcionarios[0].telefone, "12999999999");
-    strcpy(funcionarios[0].nome, "Carlos");
-    strcpy(funcionarios[0].sobrenome, "Almeida");
-    strcpy(funcionarios[0].email, "carlos@email.com");
+void inserirFuncionarios(int chave) {
+    Funcionario admin;
 
-    //Inserção um funcionário
+    // Abro ou crio o arquivo como leitura e escrita (w+)
+    FILE *arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "w+");
+    
+    // Leio o primeiro funcionário cadastrado
+    fread(&admin, sizeof(struct funcionario), 1, arquivoFuncionarios);
+    
+    // Fecho o arquivo após a leitura
+    fclose(arquivoFuncionarios);
 
-    funcionarios[1].id = 2;
-    funcionarios[1].salario = 2500.00;
-    strcpy(funcionarios[1].cpf, "321.123.321-80");
-    strcpy(funcionarios[1].cargo, "Suporte");
-    strcpy(funcionarios[1].dataNascimento, "19-11-1999");
-    strcpy(funcionarios[1].login, "suporte");
-    strcpy(funcionarios[1].senha, "123");
-    criptografar(funcionarios[1].senha, chave);
-    strcpy(funcionarios[1].telefone, "13444444444");
-    strcpy(funcionarios[1].nome, "Marcos");
-    strcpy(funcionarios[1].sobrenome, "Antonio");
-    strcpy(funcionarios[1].email, "marcos@email.com");
+    // caso já exista um funcionário cadastrado é retornado
+    if (admin.id != 0) {
+        return;
+    }
+
+    // Caso não exista nenhum funcionário cadastrado, é inserido um funcionário admin
+    admin.id = 1;
+    admin.salario = 5000.00;
+    strcpy(admin.cpf, "123.321.123-90");
+    strcpy(admin.cargo, "Gerente");
+    strcpy(admin.dataNascimento, "09-10-1999");
+    strcpy(admin.login, "admin");
+    strcpy(admin.senha, "admin");
+    criptografar(admin.senha, chave);
+    strcpy(admin.telefone, "12999999999");
+    strcpy(admin.nome, "Carlos");
+    strcpy(admin.sobrenome, "Almeida");
+    strcpy(admin.email, "carlos@email.com");
+
+    // Abro o arquivo para escrita
+    arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "w+");
+
+    // Escrevo no arquivo o funcionário admin
+    fwrite(&admin, sizeof(struct funcionario), 1, arquivoFuncionarios);
+
+    // Fecho o arquivo após a escrita
+    fclose(arquivoFuncionarios);
 }
 
 void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
@@ -736,6 +760,6 @@ int main() {
     // Variável utilizada para fazer a criptografia das senhas cadastradas na tela de cadastro de funcionário
     int chave = 0XAED;
 
-    inserirFuncionarios(funcionariosCadastrados, chave);
+    inserirFuncionarios(chave);
     inicio(clientesCadastrados, funcionariosCadastrados, chave, &quantidadeCliente, &quantidadeFuncionario);      
 }

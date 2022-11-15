@@ -66,14 +66,18 @@ int verificarSenha(char *senhaParaVerificar, char *senhaFuncionario, int chave) 
 }
 
 // Funcao feita para abrir o arquivo
-FILE * abrirArquivo (char *nomeArquivo, char *funcaoArquivo) {
+FILE * abrirArquivo(char *nomeArquivo, char *funcaoArquivo) {
     // Abertura do arquivo que contém os dados
     FILE *arquivo = fopen(nomeArquivo, funcaoArquivo);
 
-    // se o arquivo for nulo, significa que ocorreu um erro
+    // se o arquivo for nulo, significa que não existe o arquivo ainda
     if (arquivo == NULL) {
-        printf("Nao foi possivel abrir o arquivo %s: %s", nomeArquivo, strerror(errno));
-        exit(1);
+        // caso não exista é criado o arquivo
+        arquivo = fopen(nomeArquivo, "w+");
+        fclose(arquivo);
+        
+        //Depois de criado é aberto de novo o arquivo, mas com a função que o usuario passou
+        arquivo = fopen(nomeArquivo, funcaoArquivo);
     }
     // retorno do arquivo já aberto para leitura/escrita
     return arquivo;
@@ -83,11 +87,11 @@ FILE * abrirArquivo (char *nomeArquivo, char *funcaoArquivo) {
 void inserirFuncionarios(int chave) {
     Funcionario admin;
 
-    // Abro ou crio o arquivo como leitura e escrita (w+)
-    FILE *arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "w+");
+    // Abro ou crio o arquivo para leitura (rb)
+    FILE *arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "rb");
     
     // Leio o primeiro funcionário cadastrado
-    fread(&admin, sizeof(struct funcionario), 1, arquivoFuncionarios);
+    fread(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
     
     // Fecho o arquivo após a leitura
     fclose(arquivoFuncionarios);
@@ -112,10 +116,10 @@ void inserirFuncionarios(int chave) {
     strcpy(admin.email, "carlos@email.com");
 
     // Abro o arquivo para escrita
-    arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "w+");
+    arquivoFuncionarios = abrirArquivo("arquivoFuncionarios.txt", "wb");
 
     // Escrevo no arquivo o funcionário admin
-    fwrite(&admin, sizeof(struct funcionario), 1, arquivoFuncionarios);
+    fwrite(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
 
     // Fecho o arquivo após a escrita
     fclose(arquivoFuncionarios);

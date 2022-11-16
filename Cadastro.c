@@ -88,45 +88,35 @@ FILE * abrirArquivo(const char *nomeArquivo, char *funcaoArquivo) {
 }
 
 // Método utilizado para inserir os funcionários iniciais para o funcionamento do programa
-void inserirFuncionarios() {
-    Funcionario admin;
+int inserirFuncionarios(Funcionario *funcionariosCadastrados) {
+    int pos = 0;
+    Funcionario funcionario;
 
     // Abro ou crio o arquivo para leitura (rb)
     FILE *arquivoFuncionarios = abrirArquivo(ARQUIVO_FUNCIONARIO, "rb");
     
-    // Leio o primeiro funcionário cadastrado
-    fread(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
-    
-    // Fecho o arquivo após a leitura
-    fclose(arquivoFuncionarios);
+    while (fread(&funcionario, sizeof(Funcionario), 1, arquivoFuncionarios)) {
+        funcionariosCadastrados[pos] = funcionario;
+        pos++;
+    }
 
-    // caso já exista um funcionário cadastrado é retornado
-    if (admin.id != 0) {
-        return;
+    if (pos != 0) {
+        return pos;
     }
 
     // Caso não exista nenhum funcionário cadastrado, é inserido um funcionário admin
-    admin.id = 1;
-    admin.salario = 5000.00;
-    strcpy(admin.cpf, "123.321.123-90");
-    strcpy(admin.cargo, "Gerente");
-    strcpy(admin.dataNascimento, "09-10-1999");
-    strcpy(admin.login, "admin");
-    strcpy(admin.senha, "admin");
-    criptografar(admin.senha);
-    strcpy(admin.telefone, "12999999999");
-    strcpy(admin.nome, "Carlos");
-    strcpy(admin.sobrenome, "Almeida");
-    strcpy(admin.email, "carlos@email.com");
-
-    // Abro o arquivo para escrita
-    arquivoFuncionarios = abrirArquivo(ARQUIVO_FUNCIONARIO, "wb");
-
-    // Escrevo no arquivo o funcionário admin
-    fwrite(&admin, sizeof(Funcionario), 1, arquivoFuncionarios);
-
-    // Fecho o arquivo após a escrita
-    fclose(arquivoFuncionarios);
+    funcionariosCadastrados[0].id = 1;
+    funcionariosCadastrados[0].salario = 5000.00;
+    strcpy(funcionariosCadastrados[0].cpf, "123.321.123-90");
+    strcpy(funcionariosCadastrados[0].cargo, "Gerente");
+    strcpy(funcionariosCadastrados[0].dataNascimento, "09-10-1999");
+    strcpy(funcionariosCadastrados[0].login, "admin");
+    strcpy(funcionariosCadastrados[0].senha, "admin");
+    criptografar(funcionariosCadastrados[0].senha);
+    strcpy(funcionariosCadastrados[0].telefone, "12999999999");
+    strcpy(funcionariosCadastrados[0].nome, "Carlos");
+    strcpy(funcionariosCadastrados[0].sobrenome, "Almeida");
+    strcpy(funcionariosCadastrados[0].email, "carlos@email.com");
 }
 
 void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
@@ -548,8 +538,9 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
 }
 
 // Menu principal
-void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario, Funcionario funcionarioLogado) {
+void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario, int idFuncionarioLogado) {
     int opcao = 0;
+    Funcionario funcionarioLogado = funcionariosCadastrados[idFuncionarioLogado];
     do {
         system("cls");
         printf("--------------+++ MENU PRINCIPAL +++--------------\n\n");
@@ -590,144 +581,138 @@ void menu(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, in
     return;
 }
 
-int recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
+void recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncionario) {
     char senhaConfirmar[120], loginAdmin[100], senhaAdmin[120];
-    int opcao = 0, id = 0, achouAdmin = 0, indice = 0;
+    int id = 0, achouAdmin = 0, indice = 0;
+    int quantidadeFuncionarioValor = *quantidadeFuncionario;
     
     // Pegando o valor da variável por seu endereço de memória(a variável quantidadeFuncionário é o ponteiro para esse endereço de memória)
-    int quantidadeFuncionarioValor = *quantidadeFuncionario;
-    do {
-        system("cls");
-        printf("--------------+++ RECUPERAR SENHA +++--------------\n");
-        printf("Entre com o ID: ");
+    system("cls");
+    printf("--------------+++ RECUPERAR SENHA +++--------------\n");
+    printf("Entre com o ID: ");
+    scanf("%d", &id);
+    
+    // Caso o id informado seja menor que 0  ou maior que a quantidade de funcionarios será considerado inválido
+    while (id <= 0 || id > quantidadeFuncionarioValor) {
+        printf("ID invalido, tente novamente: (0 - para cancelar): ");
         scanf("%d", &id);
         
-        // Caso o id informado seja menor que 0  ou maior que a quantidade de funcionarios será considerado inválido
-        while (id <= 0 || id > quantidadeFuncionarioValor) {
-            printf("ID invalido, tente novamente: (0 - para cancelar): ");
-            scanf("%d", &id);
+        if (id == 0) {
+            return;
+        }
+    }
+
+    indice = id - 1;
+    if (funcionarioCadastrados[indice].id <= 0) {
+        printf("Funcionario nao encontrado");
+        getch();
+        return;
+    }
+    
+    if (strcmp(funcionarioCadastrados[indice].cargo, "Gerente") == 0) {
+        printf("Nao e possivel alterar a senha do administrador");
+        getch();
+        return;
+    }
+
+    // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
+    printf("Ola %s! Para alterar a senha e necessario a confirmacao de um administrador\n");
+    printf("Entre com o login do administrador: ");
+    scanf("%s", loginAdmin);
+
+    // é procurado em todos os funcionários para achar o administrador
+    for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
+        if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
+            achouAdmin = 1;
+            // Caso ache, é atribuido o valor 1 para a variável administrador e é pedido a senha do administrador
+            printf("Entre com a senha do administrador: ");
+            scanf("%s", senhaAdmin);
             
-            if (id == 0) {
-                return 0;
-            }
-        }
-
-        indice = id - 1;
-        if (funcionarioCadastrados[indice].id <= 0) {
-            printf("Funcionario nao encontrado");
-            getch();
-            return 0;
-        }
-        
-        if (strcmp(funcionarioCadastrados[indice].cargo, "Gerente") == 0) {
-            printf("Nao e possivel alterar a senha do administrador");
-            getch();
-            return 0;
-        }
-
-        // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
-        printf("Usuario encontrado! E necessario a confirmacao do administrador para esta acao\n");
-        printf("Entre com o login do administrador: ");
-        scanf("%s", loginAdmin);
-
-        // é procurado em todos os funcionários para achar o administrador
-        for (int j = 0; j < quantidadeFuncionarioValor; j ++) {
-            if (strcmp(loginAdmin, funcionarioCadastrados[j].login) == 0 && strcmp("Gerente", funcionarioCadastrados[j].cargo) == 0) {
-                achouAdmin = 1;
-                // Caso ache, é atribuido o valor 1 para a variável administrador e é pedido a senha do administrador
-                printf("Entre com a senha do administrador: ");
-                scanf("%s", senhaAdmin);
-                
-                if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha) != 0) {
-                    //Caso erre a senha do administrador
-                    printf("\nSenha incorreta!");
-                    getch();
-                    return 0;
-                }
-                // caso acerte a senha é pedido ao funcionário a nova senha
-                printf("\nEntre com sua nova senha: ");
-                scanf("%s", funcionarioCadastrados[indice].senha);
-                
-                printf("Confirme sua senha: ");
-                scanf("%s", senhaConfirmar);
-                
-                // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
-                while (strcmp(senhaConfirmar, funcionarioCadastrados[indice].senha) != 0) {
-                        printf("Senhas divergentes, tente novamente\n");
-                        printf("Entre com sua nova senha: ");
-                        scanf("%s", funcionarioCadastrados[indice].senha);
-                        printf("Confirme sua senha: ");
-                        scanf("%s", senhaConfirmar);
-                }
-
-                criptografar(funcionarioCadastrados[indice].senha);
-                printf("\nNova senha cadastrada com sucesso!");
+            if (verificarSenha(senhaAdmin, funcionarioCadastrados[j].senha) != 0) {
+                //Caso erre a senha do administrador
+                printf("\nSenha incorreta!");
                 getch();
-                return 0;
+                return;
             }
-        }
+            // caso acerte a senha é pedido ao funcionário a nova senha
+            printf("\nEntre com sua nova senha: ");
+            scanf("%s", funcionarioCadastrados[indice].senha);
+            
+            printf("Confirme sua senha: ");
+            scanf("%s", senhaConfirmar);
+            
+            // Enquanto as senhas forem divergentes é solicitado ao usuário uma nova senha 
+            while (strcmp(senhaConfirmar, funcionarioCadastrados[indice].senha) != 0) {
+                    printf("Senhas divergentes, tente novamente\n");
+                    printf("Entre com sua nova senha: ");
+                    scanf("%s", funcionarioCadastrados[indice].senha);
+                    printf("Confirme sua senha: ");
+                    scanf("%s", senhaConfirmar);
+            }
 
-        //Caso não ache o administrador, isso é, a variável achouAdmin for igual a 0
-        if (achouAdmin == 0) {
-            printf("\nAdministrador nao encontrado!");
+            criptografar(funcionarioCadastrados[indice].senha);
+            printf("\nNova senha cadastrada com sucesso!");
             getch();
-            return 0;
+            return;
         }
-    } while(opcao != 0);
-    return 0;      
+    }
+
+    //Caso não ache o administrador, isso é, a variável achouAdmin for igual a 0
+    if (achouAdmin == 0) {
+        printf("\nAdministrador nao encontrado!");
+        getch();
+        return;
+    }
+    return;      
 }
 
-Funcionario login() {
-    Funcionario funcionario;
-    Funcionario funcionarioVazio;
-    
-    int opcao = 0;
-    funcionarioVazio.id = 0;
+// caso encontre o funcionário, e o usuário digite corretamente o login e a senha, é retornado o id do funcionário que foi logado
+int login(Funcionario *funcionarioCadastrados, int *quantidadeFuncionarios) {
     char login[100], senha[120];
+    int quantidadeFuncionariosValor = *quantidadeFuncionarios;
+    int opcao = 0, achou = 0;
 
     do {
-        FILE *arquivoFuncionario = abrirArquivo(ARQUIVO_FUNCIONARIO, "rb");
-        
+        achou = 0;
         system("cls");
         printf("--------------+++ TELA DE LOGIN +++--------------\n");
-        
-        printf("Login: ");
+        printf("Entre com o login: ");
         scanf("%s", login);
-        
-        while (fread(&funcionario, sizeof(Funcionario), 1, arquivoFuncionario)) {
-            if (strcmp(funcionario.login, login) != 0) {
-                continue;
+        // é verificado em todos os funcionários(funcionários não excluídos, isso é, funcionários que tenham o id diferente de -1) cadastrados para caso algum tenha o o mesmo login que o usuário informou
+        for (int i = 0; i < quantidadeFuncionariosValor; i ++) {
+            if (funcionarioCadastrados[i].id != -1 && strcmp(funcionarioCadastrados[i].login, login) == 0) {
+                // caso tenha, é atribuido o valor 1 para a variável achou.
+                achou = 1;
+                printf("Entre com a senha: ");
+                scanf("%s", senha);
+                
+                // Se a senha do funcionário for igual a que o usuário digitou é retornado a posicao dele
+                if (verificarSenha(senha, funcionarioCadastrados[i].senha) == 0) {
+                    return i;
+                } else {
+                    printf("Senha incorreta");
+                    getch();
+                }
             }
-
-            fclose(arquivoFuncionario);
-
-            printf("Senha: ");
-            scanf("%s", senha);
-
-            if (verificarSenha(senha, funcionario.senha) != 0) {
-                printf("Senha incorreta!");
-                getch();
-
-                return funcionarioVazio;
-            }
-            
-            return funcionario;
         }
-        fclose(arquivoFuncionario);
-
-        system("cls");
-        printf("Login incorreto, deseja tentar novamente?\n( 0 - Sair, 1 - Tentar novamente): ");
-        scanf("%d", &opcao);
-
-    } while (opcao != 0);
-
-    return funcionarioVazio;
+        if (achou == 0) {
+            // Se nao encontrou exibi a opcão de tentar novamente ou desistir
+            printf("Usuario nao encontrado, deseja tentar novamente? (0 - sair, 1 - continuar): ");
+            scanf("%d", &opcao);
+            while(opcao != 0 && opcao != 1){
+                printf("Opcao incorreta, tente novamente: ");
+                scanf("%d", &opcao);
+            }
+        }
+    } while(opcao != 0);
+    return -1;
 }
+
 
 void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, int *quantidadeCliente, int *quantidadeFuncionario)
 {
     int opcao = 0;
-    Funcionario funcionarioLogado;
+    int funcionarioLogado = 0;
     do {
         system("cls");
         printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
@@ -746,9 +731,9 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         {
             case 1:
                 // a variável usuario logado será utilizada para fazer o controle entre a permissão de acesso entre determinadas funcionalidades
-                funcionarioLogado = login();
+                funcionarioLogado = login(funcionariosCadastrados, quantidadeFuncionario);
 
-                if (funcionarioLogado.id > 0) {
+                if (funcionarioLogado > 0) {
                     menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario, funcionarioLogado);
                 } 
                 break;
@@ -767,8 +752,7 @@ int main() {
     
     // Variáveis para controlar a quantidade de clientes e funcionários cadastrados
     int quantidadeCliente = 0;
-    int quantidadeFuncionario = 2;
+    int quantidadeFuncionario = inserirFuncionarios(funcionariosCadastrados);
 
-    inserirFuncionarios();
     inicio(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);      
 }

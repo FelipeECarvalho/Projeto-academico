@@ -91,10 +91,8 @@ FILE * abrirArquivo(const char *nomeArquivo, char *funcaoArquivo) {
 int inserirFuncionarios(Funcionario *funcionariosCadastrados) {
     int pos = 0;
     Funcionario funcionario;
-
-    // Abro ou crio o arquivo para leitura (rb)
     FILE *arquivoFuncionarios = abrirArquivo(ARQUIVO_FUNCIONARIO, "rb");
-    
+        
     while (fread(&funcionario, sizeof(Funcionario), 1, arquivoFuncionarios)) {
         funcionariosCadastrados[pos] = funcionario;
         pos++;
@@ -117,6 +115,36 @@ int inserirFuncionarios(Funcionario *funcionariosCadastrados) {
     strcpy(funcionariosCadastrados[0].nome, "Carlos");
     strcpy(funcionariosCadastrados[0].sobrenome, "Almeida");
     strcpy(funcionariosCadastrados[0].email, "carlos@email.com");
+
+    return 1;
+}
+
+// Método utilizado para inserir os clientes armazenados nos arquivos
+int inserirClientes(Cliente *clientesCadastrados) {
+    int pos = 0;
+    Cliente cliente;
+    FILE *arquivoCliente = abrirArquivo(ARQUIVO_CLIENTE, "rb");
+        
+    while (fread(&cliente, sizeof(Cliente), 1, arquivoCliente)) {
+        clientesCadastrados[pos] = cliente;
+        pos++;
+    }
+
+    return pos;
+}
+
+void salvar(Funcionario *funcionariosCadastrados, Cliente *clientesCadastrados, int *quantidadeFuncionarios, int *quantidadeClientes) {
+    int quantidadeFuncionarioValor = *quantidadeFuncionarios;
+    int quantidadeClientesValor = *quantidadeClientes;
+
+    FILE *arquivo = abrirArquivo(ARQUIVO_FUNCIONARIO, "wb");
+    fwrite(funcionariosCadastrados, sizeof(Funcionario), quantidadeFuncionarioValor, arquivo);
+    fclose(arquivo);
+
+    arquivo = abrirArquivo(ARQUIVO_CLIENTE, "wb");
+    fwrite(clientesCadastrados, sizeof(Cliente), quantidadeClientesValor, arquivo);
+    fclose(arquivo);
+
 }
 
 void cadastroCliente(Cliente *clientes, int quantidadeClientes) {
@@ -486,8 +514,7 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
     int funcionariosCadastradosValor = *quantidadeFuncionario;
     
     // Total de clientes e funcionários, sem contar os excluídos
-    int clientesValidos = 0;
-    int funcionariosValidos = 0;
+    int clientesValidos = 0, funcionariosValidos = 0, clientesExcluidos = 0, funcionariosExcluidos = 0;
    
     // Por padrão o maior e o menor salário é do primeiro usuário cadastrado, depois esse valor é modificado
     double maiorSalario = funcionariosCadastrados[0].salario;
@@ -517,23 +544,30 @@ void relatorio(Cliente *clientesCadastrados,Funcionario *funcionariosCadastrados
                 menorSalario = funcionariosCadastrados[i].salario;
                 strcpy(nomeMenorSalario, funcionariosCadastrados[i].nome);
             }
+        } else {
+            funcionariosExcluidos++;
         }
     }
 
     for (int i = 0; i < clientesCadastradosValor; i ++) {
         if (clientesCadastrados[i].id > 0){
             clientesValidos++;
+        } else {
+            clientesExcluidos ++;
         }
     }
 
     mediaSalario /= funcionariosCadastradosValor;
-    printf("--------------+++ RELATORIO +++--------------\n");
-    printf("Total de clientes cadastrados: %d\n\n", clientesValidos);
-    printf("Total de funcionarios cadastrados: %d\n\n", funcionariosValidos);
-    printf("O maior salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", maiorSalario, nomeMaiorSalario);
-    printf("O menor salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\n", menorSalario, nomeMenorSalario);
-    printf("A media de salarios cadastrados e de: %.2f", mediaSalario);
+    
+    char texto[] = "--------------+++ RELATORIO +++--------------\nTotal de clientes cadastrados: %d\n\nTotal de funcionarios cadastrados: %d\n\nO maior salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\nO menor salario cadastrado entre os funcionarios e de: %.2f e pertence ao funcionario: %s\n\nA media de salarios cadastrados e de: %.2f\n\nTotal de clientes excluidos: %d\n\nTotal de funcionarios Excluidos: %d\n\n";
+    
+    FILE *arquivo = abrirArquivo("relatorio.txt", "w");
+    
+    // Mostrando na tela e salvando no arquivo
+    fprintf(arquivo, texto, clientesValidos, funcionariosValidos, maiorSalario, nomeMaiorSalario, menorSalario, nomeMenorSalario, mediaSalario, clientesExcluidos, funcionariosExcluidos);
+    printf(texto, clientesValidos, funcionariosValidos, maiorSalario, nomeMaiorSalario, menorSalario, nomeMenorSalario, mediaSalario, clientesExcluidos, funcionariosExcluidos);
 
+    fclose(arquivo);
     getch();
 }
 
@@ -616,7 +650,7 @@ void recuperarSenhar(Funcionario *funcionarioCadastrados, int *quantidadeFuncion
     }
 
     // Para alterar a senha é preciso a permissão do administrador, para isso é necessário o login e a senha dele
-    printf("Ola %s! Para alterar a senha e necessario a confirmacao de um administrador\n");
+    printf("Ola %s! Para alterar a senha e necessario a confirmacao de um administrador\n", funcionarioCadastrados[indice].nome);
     printf("Entre com o login do administrador: ");
     scanf("%s", loginAdmin);
 
@@ -718,7 +752,7 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
         printf("------------+++ BEM VINDO AO GESTAO B&L +++----------------\n");
         printf("1 - Efetuar login\n");
         printf("2 - Esqueci senha\n");
-        printf("0 - Sair do programa\n");
+        printf("0 - Salvar e sair do programa\n");
         printf("--------------------\n");
         printf("Escolha uma opcao: ");
         scanf("%d", &opcao);
@@ -733,12 +767,15 @@ void inicio(Cliente *clientesCadastrados, Funcionario *funcionariosCadastrados, 
                 // a variável usuario logado será utilizada para fazer o controle entre a permissão de acesso entre determinadas funcionalidades
                 funcionarioLogado = login(funcionariosCadastrados, quantidadeFuncionario);
 
-                if (funcionarioLogado > 0) {
+                if (funcionarioLogado >= 0) {
                     menu(clientesCadastrados, funcionariosCadastrados, quantidadeCliente, quantidadeFuncionario, funcionarioLogado);
                 } 
                 break;
             case 2:
                 recuperarSenhar(funcionariosCadastrados, quantidadeFuncionario);
+                break;
+            case 0:
+                salvar(funcionariosCadastrados, clientesCadastrados, quantidadeFuncionario, quantidadeCliente);
                 break;
         }
 
@@ -751,7 +788,7 @@ int main() {
     Funcionario funcionariosCadastrados[1000];
     
     // Variáveis para controlar a quantidade de clientes e funcionários cadastrados
-    int quantidadeCliente = 0;
+    int quantidadeCliente = inserirClientes(clientesCadastrados);
     int quantidadeFuncionario = inserirFuncionarios(funcionariosCadastrados);
 
     inicio(clientesCadastrados, funcionariosCadastrados, &quantidadeCliente, &quantidadeFuncionario);      
